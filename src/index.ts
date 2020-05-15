@@ -31,7 +31,7 @@ global.Plugins = Plugins
 try {
     Plugins.loadPlugins()
 } catch (err) {
-    if (err) throw new Error(err)
+    if (err) throw err
 }
 
 Client.connect()
