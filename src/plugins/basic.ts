@@ -1,6 +1,5 @@
 'use strict';
-import { Embed } from "./../../lib/embed"
-
+import { Embed } from "../../lib/embed"
 const githubUrl: string = 'https://github.com/nicolito128/Muphasa-bot'
 
 export const commands: Types.ICommands = {
@@ -20,36 +19,38 @@ export const commands: Types.ICommands = {
         )
     },
 
-    topic({message, targets}) {
+    topic({message, user, targets}) {
         const helps = global.Plugins.getHelps()
         const topicList = ['basic', 'admin']
-        const topic = targets[0].toLowerCase().trim()
+        const embedTopicInvalid = Embed.notify(
+            'Topics',
+            `Lista de comandos a consultar: \`${topicList.join(' | ')}\``
+        );
+        let topic: string = targets[0]
+        if (!topic) return message.channel.send(embedTopicInvalid)
 
-        if (!topic || !topicList.includes(topic)) {
-            return message.channel.send(
-                Embed.notify(
-                    'Topics',
-                    `Lista de comandos a consultar: \`${topicList.join(' ')}\``
-                )
-            );
-        }
+        topic = targets[0].toLowerCase().trim()
+        if (!topicList.includes(topic)) return message.channel.send(embedTopicInvalid)
 
-        const topicData = Object.keys(helps).filter((key: string) => {
-            if (helps[key].topic == topic) {
-                return `\`${global.Config.prefix}${key}\``
-            }
-        })
+        let topicData = Object.keys(helps)
+            .map((key: string) => {
+                if (helps[key].topic == topic) {
+                    return '`' + global.Config.prefix + key + '`'
+                }
+            });
 
         message.channel.send(
             Embed.notify(
                 `Topic: ${topic}`,
-                topicData
+                topicData as string[]
             )
         )
     },
 
     say({message, targets}) {
-        return message.channel.send(targets.join(' '))   
+        let msg: string = targets.join(' ').trim()
+        if (!msg) return message.channel.send('Debes ingresar un texto para que repita.')
+        return message.channel.send(msg)   
     },
 
     github({message, user}) {
@@ -70,11 +71,20 @@ export const commands: Types.ICommands = {
 
         try {
             message.channel.send(eval(code), {code: 'javascript'})
-            console.log('EVAL OUTPUT: ' + eval(code))
+            console.log('\nEVAL OUTPUT:\n' + eval(code))
         } catch(err) {
             message.channel.send(`ERROR!\n${err}`, {code: 'javascript'})
-            console.log('EVAL ERROR OUTPUT: ' + eval(code))
         }
+    },
+
+    pick({message, targets}) {
+        targets = targets.join(' ').split(',')
+        if (targets.length <= 1) return message.channel.send('Intenta ingresar más elementos para seleccionar.')
+        const len = targets.length
+        const randomArgument = targets[Math.round(Math.random() * (len - 0) + 0)]
+        message.channel.send(
+            Embed.notify('Random pick', `\`${randomArgument}\``)
+        )
     },
 }
 
@@ -88,6 +98,12 @@ export const help: Types.IHelps = {
     github: {
         topic: 'basic',
         info: 'Muestra el enlace al código fuente del BOT y datos sobre el desarrollo.'
+    },
+
+    pick: {
+        topic: 'basic',
+        usage: 'element 1, element 2, element 3...',
+        info: 'Selecciona un elemento aleatorio entre los proporcionados.'
     },
 
     eval: {
