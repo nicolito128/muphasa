@@ -6,15 +6,13 @@ function run() {
     child_process.execSync("node ./.src-dist/index.js", {stdio: 'inherit', cwd: __dirname});
 }
 
-var built = false;
 function build() {
 	child_process.execSync('node build', {stdio: 'inherit', cwd: __dirname});
-	built = true;
 }
 
 try {
-    if (!built) build();
-	run()
+    build();
+	run();
 } catch(err) {
     if (err) throw err;
 }
