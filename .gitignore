@@ -1,0 +1,9 @@
+/node_modules
+/config/config.js
+package-lock.json
+
+# Typescript build artifacts
+.*-dist/
+
+# visual studio
+.vscode
