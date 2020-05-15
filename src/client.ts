@@ -1,6 +1,7 @@
 'use strict';
 import * as Discord from "discord.js"
 import * as Config from "./../config/config.js"
+import { Plugins } from "./plugins"
 
 export interface IClient {
     // Methods
@@ -11,6 +12,7 @@ export interface IClient {
     handleErrors(): void;
     handleWarns(): void;
     handleDebug(): void;
+    handleMessage(): void;
 
     connect(): void;
 }
@@ -41,6 +43,12 @@ class CustomClient extends Discord.Client implements IClient {
         this.on('debug', e => console.log(`DEBUG STATUS: ${e}\n`))
     }
 
+    handleMessage(): void {
+        this.on('message', async (message: Discord.Message) => {
+            return await Plugins.evalMessage(message)
+        })
+    }
+
     ready(callback?: ICallback): void {
         this.on('ready', () => {
             (this.user as Discord.ClientUser).setActivity(this.activity, { type: 'WATCHING' })
@@ -48,6 +56,7 @@ class CustomClient extends Discord.Client implements IClient {
             this.handleErrors()
             this.handleWarns()
             this.handleDebug()
+            this.handleMessage()
 
             if (callback) callback.call(this)
         })
