@@ -31,10 +31,12 @@ export interface IHelps {
 }
 
 interface IHelpData {
-    topic?: string;
+    topic?: TopicType;
     usage?: string;
     info: string | string[];
 }
+
+type TopicType = 'basic' | 'admin';
 
 // Commands
 export interface ICommands {
