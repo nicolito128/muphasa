@@ -12,6 +12,8 @@ export interface IPlugins {
     getCommand(message: Message): ICommandHandler;
     parseCommand(message: Message): ICommandParams;
 
+    getHelps(): IHelps;
+
     loadPlugins(): void;
     loadPlugin(plugin: IPluginStruct): void;
     filterPlugin(plugin: IPluginStruct): IPluginStruct;
@@ -94,8 +96,8 @@ class PluginsHandler implements IPlugins {
         return this.commands.get(cmd)
     }
 
-    getHelps(): CollectionReturnType {
-        return this.helps.getAll()
+    getHelps(): IHelps {
+        return this.helps.getAll() as IHelps
     }
 
     parseCommand(message: Message): ICommandParams {
@@ -140,7 +142,7 @@ class PluginsHandler implements IPlugins {
         }
 
         if (plugin.help) {
-            Object.keys(plugin.helps).forEach((key: string) => {
+            Object.keys(plugin.help).forEach((key: string) => {
                 value = plugin.help[key]
                 this.helps.insert(key, value)
             })
@@ -157,11 +159,11 @@ class PluginsHandler implements IPlugins {
         }
 
         if (plugin.help) {
-            Object.keys(plugin.helps).forEach((key: string) => {
+            Object.keys(plugin.help).forEach((key: string) => {
                 // Check if the help is a string or an array
-                if (typeof plugin.help.info !== 'string')  {
+                if (typeof (plugin.help as unknown as IHelps)[key].info != 'string')  {
                     // If this is false: remove the no-helper
-                    if (!Array.isArray(plugin.help.info)) delete plugin.help[key]
+                    if (!Array.isArray((plugin.help as unknown as IHelps)[key].info)) delete plugin.help[key]
                 }
             })
         }
