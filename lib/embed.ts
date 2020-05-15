@@ -2,8 +2,6 @@
 import * as Discord from "discord.js"
 
 export interface IEmbed {
-    options: IEmbedOptions;
-
     create(options?: IEmbedOptions): CustomEmbed;
     denied(): CustomEmbed;
     notify(title: string, desc: string | string[], color: Discord.ColorResolvable): CustomEmbed;
@@ -14,8 +12,6 @@ interface IEmbedOptions {
 }
 
 class CustomEmbed extends Discord.MessageEmbed implements IEmbed {
-    options: IEmbedOptions;
-
     constructor(options: IEmbedOptions) {
         super(options)
     }
