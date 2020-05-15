@@ -13,26 +13,34 @@ export interface IPlugins {
     parseCommand(message: Message): ICommandParams;
 
     loadPlugins(): void;
-    loadPlugin(plugin: CollectionReturnType): void;
-    filterPlugin(plugin: CollectionReturnType): CollectionReturnType;
+    loadPlugin(plugin: IPluginStruct): void;
+    filterPlugin(plugin: IPluginStruct): IPluginStruct;
 }
 
-export interface ICommands {
-    [c: string]: ICommandHandler
+export interface IPluginStruct {
+    [p: string]: CollectionReturnType
 }
 
+export type Message = Discord.Message
+
+// Helps
 export interface IHelps {
     [h: string]: IHelpData
-}
-
-interface ICommandHandler {
-    ({message, user, targets, cmd}: ICommandParams): any;
 }
 
 interface IHelpData {
     topic?: string;
     usage?: string;
     info: string | string[];
+}
+
+// Commands
+export interface ICommands {
+    [c: string]: ICommandHandler
+}
+
+interface ICommandHandler {
+    ({message, user, targets, cmd}: ICommandParams): any;
 }
 
 interface ICommandParams {
@@ -42,8 +50,7 @@ interface ICommandParams {
     cmd: string | undefined;
 }
 
-export type Message = Discord.Message
-
+// Collection
 type CollectionReturnType = ICommands | IHelps
 type CollectionValueType = ICommandHandler | IHelpData
 
@@ -61,7 +68,6 @@ class PluginCollection extends Map {
         this.forEach( (value: CollectionValueType, key: string) => {
             data[key] = value
         })
-        console.log(data)
 
         return data
     }
@@ -102,7 +108,7 @@ class PluginsHandler implements IPlugins {
 
     loadPlugins(): void {
         const files: string[] = fs.readdirSync('src/plugins/')
-        const plugins: any[] = files.map((file: string) => {
+        const plugins: IPluginStruct[] = files.map((file: string) => {
             let plugin
 
             if (file.endsWith('.ts')) {
@@ -116,48 +122,46 @@ class PluginsHandler implements IPlugins {
             return plugin
         })
 
-        plugins.forEach((plugin: any) => {
+        plugins.forEach((plugin: IPluginStruct) => {
             this.loadPlugin(this.filterPlugin(plugin))
         })
 
         console.log(`Plugins loaded successfully!`)
     }
 
-    loadPlugin(plugin: CollectionReturnType): void {
+    loadPlugin(plugin: IPluginStruct): void {
         let value: CollectionValueType
+
         if (plugin.commands) {
             Object.keys(plugin.commands).forEach((key: string) => {
-                value = (plugin.commands as unknown as ICommands)[key] as ICommandHandler
+                value = plugin.commands[key]
                 this.commands.insert(key, value)
             })
         }
 
         if (plugin.help) {
             Object.keys(plugin.helps).forEach((key: string) => {
-                value = (plugin.helps as unknown as IHelps)[key] as IHelpData
+                value = plugin.help[key]
                 this.helps.insert(key, value)
             })
         }
-        console.log(plugin)
     }
 
-    filterPlugin(plugin: CollectionReturnType): CollectionReturnType {
+    filterPlugin(plugin: IPluginStruct): IPluginStruct {
         if (plugin.commands) {
             Object.keys(plugin.commands).forEach((key: string) => {
-                if (typeof (plugin.commands as unknown as ICommands)[key] != 'function') {
-                    delete (plugin.commands as unknown as ICommands)[key]
+                if (typeof plugin.commands[key] != 'function') {
+                    delete plugin.commands[key]
                 }
             })
         }
 
         if (plugin.help) {
             Object.keys(plugin.helps).forEach((key: string) => {
-                const pluginHelp = (plugin.help as unknown as IHelps)[key]
-
                 // Check if the help is a string or an array
-                if (typeof pluginHelp.info !== 'string')  {
+                if (typeof plugin.help.info !== 'string')  {
                     // If this is false: remove the no-helper
-                    if (!Array.isArray(pluginHelp.info)) delete (plugin.help as unknown as IHelps)[key]
+                    if (!Array.isArray(plugin.help.info)) delete plugin.help[key]
                 }
             })
         }
