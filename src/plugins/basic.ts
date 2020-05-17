@@ -1,5 +1,5 @@
 'use strict';
-import { Embed, IEmbed } from "../../lib/embed"
+import { Embed, CustomEmbed } from "../../lib/embed"
 
 type RGB = {r: number, g: number, b: number}
 
@@ -43,7 +43,7 @@ export const commands: Types.ICommands = {
     topic({message, user, targets}) {
         const helps: Types.IHelps = global.Plugins.getHelps()
         const topicList: string[] = global.Plugins.getTopics()
-        const embedTopicInvalid: IEmbed = Embed.notify(
+        const embedTopicInvalid: CustomEmbed = Embed.notify(
             'Topics',
             `Lista de comandos a consultar: \`${topicList.join(' | ')}\``
         );

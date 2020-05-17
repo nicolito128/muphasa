@@ -1,17 +1,11 @@
 'use strict';
 import * as Discord from "discord.js"
 
-export interface IEmbed {
-    create(options?: IEmbedOptions): CustomEmbed;
-    denied(): CustomEmbed;
-    notify(title: string, desc: string | string[], color?: Discord.ColorResolvable): CustomEmbed;
-}
-
 interface IEmbedOptions {
     [o: string]: any;
 }
 
-class CustomEmbed extends Discord.MessageEmbed implements IEmbed {
+export class CustomEmbed extends Discord.MessageEmbed {
     constructor(options: IEmbedOptions) {
         super(options)
     }
@@ -36,4 +30,4 @@ class CustomEmbed extends Discord.MessageEmbed implements IEmbed {
     }
 }
 
-export const Embed: IEmbed = new CustomEmbed({});
+export const Embed: CustomEmbed = new CustomEmbed({});
