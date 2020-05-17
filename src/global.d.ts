@@ -1,11 +1,11 @@
-import { IClient } from "./client"
+import { CustomClient } from "./client"
 import * as Plugins from "./plugins"
 
 declare global {
     namespace NodeJS {
         interface Global {
             Config: {[k: string]: any};
-            Client: IClient;
+            Client: CustomClient;
             Plugins: Plugins.PluginsHandler;
         }
     }
