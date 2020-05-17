@@ -3,25 +3,7 @@ import * as Discord from "discord.js"
 import * as Config from "./../config/config.js"
 import { Plugins } from "./plugins"
 
-export interface IClient {
-    user: Discord.ClientUser | null;
-
-    // Methods
-    ready(): void;
-
-    setActivityMessage(msg: string): void
-
-    handleErrors(): void;
-    handleWarns(): void;
-    handleDebug(): void;
-    handleMessage(): void;
-
-    connect(): void;
-}
-
-interface ICallback { (): void }
-
-class CustomClient extends Discord.Client implements IClient {
+export class CustomClient extends Discord.Client {
     activity: string;
     user: Discord.ClientUser | null;
 
@@ -53,7 +35,7 @@ class CustomClient extends Discord.Client implements IClient {
         })
     }
 
-    ready(callback?: ICallback): void {
+    ready(): void {
         this.on('ready', () => {
             (this.user as Discord.ClientUser).setActivity(this.activity, { type: 'WATCHING' })
 
@@ -61,8 +43,6 @@ class CustomClient extends Discord.Client implements IClient {
             this.handleWarns()
             this.handleDebug()
             this.handleMessage()
-
-            if (callback) callback.call(this)
         })
     }
 
@@ -82,4 +62,4 @@ class CustomClient extends Discord.Client implements IClient {
     }
 }
 
-export const Client: IClient = new CustomClient()
+export const Client: CustomClient = new CustomClient()
