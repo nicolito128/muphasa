@@ -86,6 +86,17 @@ export const commands: Types.ICommands = {
             Embed.notify('Random pick', `\`${randomArgument}\``)
         )
     },
+
+    rand({message, targets}) {
+        const num: number = parseInt(targets.join(' '))
+        if (isNaN(num)) return message.channel.send('Este comando sólo admite un número como parametro.')
+        if (num >= (100000 * 10000000)) return message.channel.send('No voy a calcular eso, lol')
+
+        const randomNumber: number = Math.round(Math.random() * (num - 0) + 0)
+        message.channel.send(
+            Embed.notify('Random num', `\`${randomNumber}\``)
+        )
+    },
 }
 
 export const help: Types.IHelps = {
