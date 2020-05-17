@@ -66,7 +66,7 @@ export const commands: Types.ICommands = {
     eval({message, targets}) {
         if (!global.Config.owners.includes(message.author.id)) return message.channel.send( Embed.denied() )
 
-        const code = targets.join(' ')
+        const code: string = targets.join(' ')
         if (!code) return message.channel.send('Ingresa código que poder evaluar.')
 
         try {
@@ -80,8 +80,8 @@ export const commands: Types.ICommands = {
     pick({message, targets}) {
         targets = targets.join(' ').split(',')
         if (targets.length <= 1) return message.channel.send('Intenta ingresar más elementos para seleccionar.')
-        const len = targets.length
-        const randomArgument = targets[Math.round(Math.random() * (len - 0) + 0)]
+        const len: number = targets.length
+        const randomArgument: string = targets[Math.round(Math.random() * (len - 0) + 0)]
         message.channel.send(
             Embed.notify('Random pick', `\`${randomArgument}\``)
         )
