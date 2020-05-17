@@ -1,6 +1,27 @@
 'use strict';
 import { Embed } from "../../lib/embed"
+
+type RGB = {r: number, g: number, b: number}
+
 const githubUrl: string = 'https://github.com/nicolito128/Muphasa-bot'
+
+const getHexValue = (n: number): string => Number(n).toString(16)
+const rgbToHex = (r: number, g: number, b: number): string => {
+    const red: string = getHexValue(r)
+    const green: string = getHexValue(g)
+    const blue: string = getHexValue(b)
+
+    return red + green + blue
+}
+
+const hexToRgb = (hex: string): RGB | null => {
+    let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+    } : null;
+}
 
 export const commands: Types.ICommands = {
     help({message, targets}) {
@@ -57,7 +78,7 @@ export const commands: Types.ICommands = {
         message.channel.send(
             Embed.notify(
                 'Github',
-                `¡Hola, ${user}! Soy **${global.Client.user.name}**. Todavía me encuentro en fase de pruebas, ¡Pero no dudes en contar conmigo como tu BOT de confianza!`,
+                `¡Hola, ${user}! Soy **${global.Client.user?.username}**. Todavía me encuentro en fase de pruebas, ¡Pero no dudes en contar conmigo como tu BOT de confianza!`,
                 [68, 197, 76] // rgb
                 ).setURL(githubUrl)
         )
@@ -97,6 +118,36 @@ export const commands: Types.ICommands = {
             Embed.notify('Random num', `\`${randomNumber}\``)
         )
     },
+
+    hex({message, targets}) {
+        let hex: string, rgb: RGB | null, rgbInEmbed: string
+        let image: string = 'https://dummyimage.com/1000x1000/'
+
+        if (!targets || !targets[0]) return message.channel.send(`No ingresaste ningún color para mostrar. Para más información usa \`${global.Config.prefix}help hex\``)
+
+        const targetsParsed: number[] = targets.map(target => parseInt(target))
+        if (targetsParsed.length > 1) {
+            if (targetsParsed.length < 3) return message.channel.send(`Si ingresas un valor RGB debes pasar 3 parametros.`)
+            targetsParsed.forEach(target => {
+                if (isNaN(target)) return message.channel.send('Si ingresas valores RGB todos los parametros deben ser números.')
+            })
+
+            hex = rgbToHex(targetsParsed[0], targetsParsed[1], targetsParsed[2])
+        } else {
+            hex = targets[0]
+        }
+
+        image += `${hex}/${hex}`
+        rgb = hexToRgb(hex.toString())
+        rgbInEmbed = rgb ? (rgb as RGB).r.toString() + ' ' + (rgb as RGB).g.toString() + ' ' + (rgb as RGB).b.toString() : 'NaN'
+
+        message.channel.send(
+            Embed.notify(
+                '',
+                [`\`HEX: #${hex}\``, `\`RGB: ${rgbInEmbed}\``],
+                'transparent').setImage(image)
+        )
+    }
 }
 
 export const help: Types.IHelps = {
@@ -121,6 +172,12 @@ export const help: Types.IHelps = {
         topic: "basic",
         usage: 'number',
         info: 'Obten un número aleatorio entre 0 y el valor proporcionado.'
+    },
+
+    hex: {
+        topic: "basic",
+        usage: 'hex | red blue green',
+        info: 'Muestra una imagen completamente del color hex/rgb ingresado.'
     },
 
     eval: {
