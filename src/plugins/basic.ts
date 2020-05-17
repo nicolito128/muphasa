@@ -117,6 +117,12 @@ export const help: Types.IHelps = {
         info: 'Selecciona un elemento aleatorio entre los proporcionados.'
     },
 
+    rand: {
+        topic: "basic",
+        usage: 'number',
+        info: 'Obten un número aleatorio entre 0 y el valor proporcionado.'
+    },
+
     eval: {
         topic: 'admin',
         usage: 'code',
