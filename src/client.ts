@@ -4,6 +4,8 @@ import * as Config from "./../config/config.js"
 import { Plugins } from "./plugins"
 
 export interface IClient {
+    user: Discord.ClientUser | null;
+
     // Methods
     ready(): void;
 
@@ -21,10 +23,12 @@ interface ICallback { (): void }
 
 class CustomClient extends Discord.Client implements IClient {
     activity: string;
+    user: Discord.ClientUser | null;
 
     constructor() {
         super()
         this.activity = `Prefix: ${Config.prefix}`
+        this.user = super.user
     }
 
     setActivityMessage(msg: string) {
