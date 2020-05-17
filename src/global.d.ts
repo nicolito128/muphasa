@@ -6,7 +6,7 @@ declare global {
         interface Global {
             Config: {[k: string]: any};
             Client: IClient;
-            Plugins: Plugins.IPlugins;
+            Plugins: Plugins.PluginsHandler;
         }
     }
 

@@ -3,23 +3,6 @@ import * as Discord from "discord.js"
 import * as Config from "./../config/config.js"
 import * as fs from "fs"
 
-export interface IPlugins {
-    commands: PluginCollection;
-    helps: PluginCollection;
-
-    evalMessage(message: Message): void;
-
-    getCommand(message: Message): ICommandHandler;
-    parseCommand(message: Message): ICommandParams;
-
-    getHelps(): IHelps;
-    getTopics(): string[];
-
-    loadPlugins(): void;
-    loadPlugin(plugin: IPluginStruct): void;
-    filterPlugin(plugin: IPluginStruct): IPluginStruct;
-}
-
 export interface IPluginStruct {
     [p: string]: CollectionReturnType
 }
@@ -42,10 +25,6 @@ export interface ICommands {
     [c: string]: ICommandHandler
 }
 
-interface ICommandHandler {
-    ({message, user, targets, cmd}: ICommandParams): any;
-}
-
 interface ICommandParams {
     message: Message;
     user: Discord.User;
@@ -53,11 +32,13 @@ interface ICommandParams {
     cmd: string | undefined;
 }
 
+type ICommandHandler = ({message, user, targets, cmd}: ICommandParams) => any;
+
 // Collection
 type CollectionReturnType = ICommands | IHelps
 type CollectionValueType = ICommandHandler | IHelpData
 
-class PluginCollection extends Map {
+export class PluginCollection extends Map {
     constructor() {
         super()
     }
@@ -76,7 +57,7 @@ class PluginCollection extends Map {
     }
 }
 
-class PluginsHandler implements IPlugins {
+export class PluginsHandler {
     commands: PluginCollection;
     helps: PluginCollection;
 
@@ -181,4 +162,4 @@ class PluginsHandler implements IPlugins {
     }
 }
 
-export const Plugins: IPlugins = new PluginsHandler()
+export const Plugins: PluginsHandler = new PluginsHandler()
