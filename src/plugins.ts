@@ -13,6 +13,7 @@ export interface IPlugins {
     parseCommand(message: Message): ICommandParams;
 
     getHelps(): IHelps;
+    getTopics(): string[];
 
     loadPlugins(): void;
     loadPlugin(plugin: IPluginStruct): void;
@@ -31,12 +32,10 @@ export interface IHelps {
 }
 
 interface IHelpData {
-    topic?: TopicType;
+    topic: string;
     usage?: string;
     info: string | string[];
 }
-
-type TopicType = 'basic' | 'admin';
 
 // Commands
 export interface ICommands {
@@ -100,6 +99,14 @@ class PluginsHandler implements IPlugins {
 
     getHelps(): IHelps {
         return this.helps.getAll() as IHelps
+    }
+
+    getTopics(): string[] {
+        let topics: Set<string> = new Set()
+        this.helps.forEach((value: any) => {
+            topics.add(value.topic)
+        })
+        return [...topics]
     }
 
     parseCommand(message: Message): ICommandParams {
