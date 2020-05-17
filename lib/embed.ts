@@ -4,7 +4,7 @@ import * as Discord from "discord.js"
 export interface IEmbed {
     create(options?: IEmbedOptions): CustomEmbed;
     denied(): CustomEmbed;
-    notify(title: string, desc: string | string[], color: Discord.ColorResolvable): CustomEmbed;
+    notify(title: string, desc: string | string[], color?: Discord.ColorResolvable): CustomEmbed;
 }
 
 interface IEmbedOptions {
@@ -27,7 +27,8 @@ class CustomEmbed extends Discord.MessageEmbed implements IEmbed {
             .setDescription(`No tienes suficiente autoridad para usar este comando.`)
     }
 
-    notify(title: string, desc: string | string[], color: Discord.ColorResolvable = [57, 140, 232]): CustomEmbed {
+    notify(title: string, desc: string | string[], color?: Discord.ColorResolvable): CustomEmbed {
+        if (!color) color = [57, 140, 232]
         return this.create()
             .setTitle(title)
             .setColor(color)
@@ -35,4 +36,4 @@ class CustomEmbed extends Discord.MessageEmbed implements IEmbed {
     }
 }
 
-export const Embed: CustomEmbed = new CustomEmbed({});
+export const Embed: IEmbed = new CustomEmbed({});
