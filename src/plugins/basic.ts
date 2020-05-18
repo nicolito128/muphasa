@@ -84,8 +84,8 @@ export const commands: Types.ICommands = {
         )
     },
 
-    eval({message, targets}) {
-        if (!global.Config.owners.includes(message.author.id)) return message.channel.send( Embed.denied() )
+    eval({message, user, targets}) {
+        if (!global.Config.owners.includes(user.id)) return message.channel.send( Embed.denied() )
 
         const code: string = targets.join(' ')
         if (!code) return message.channel.send('Ingresa código que poder evaluar.')
