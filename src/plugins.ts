@@ -91,7 +91,7 @@ export class PluginsHandler {
     }
 
     parseCommand(message: Message): ICommandParams {
-        let user: Discord.User = (message.member as Discord.GuildMember).user
+        let user: Discord.User = message.author
         let targets: string[] = message.content.slice(Config.prefix.length).trim().split(' ')
         let cmd: string | undefined = targets?.shift()?.toLowerCase()
 
