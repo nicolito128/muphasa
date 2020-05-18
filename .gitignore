@@ -1,7 +1,7 @@
 /node_modules
 /config/config.js
 package-lock.json
-
+/db
 # Typescript build artifacts
 .*-dist/
 
