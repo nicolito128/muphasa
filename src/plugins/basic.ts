@@ -40,12 +40,12 @@ export const commands: Types.ICommands = {
         )
     },
 
-    topic({message, user, targets}) {
+    topic({message, targets}) {
         const helps: Types.IHelps = global.Plugins.getHelps()
         const topicList: string[] = global.Plugins.getTopics()
         const embedTopicInvalid: CustomEmbed = Embed.notify(
             'Topics',
-            `Lista de comandos a consultar: \`${topicList.join(' | ')}\``
+            `Listas de comandos a consultar: \`${topicList.join(' | ')}\``
         );
         let topic: string = targets[0]
         if (!topic) return message.channel.send(embedTopicInvalid)
