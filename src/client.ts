@@ -1,6 +1,7 @@
 'use strict';
 import * as Discord from "discord.js"
 import * as Config from "./../config/config.js"
+import { Database } from './../lib/json-db'
 import { Plugins } from "./plugins"
 
 export class CustomClient extends Discord.Client {
@@ -17,20 +18,46 @@ export class CustomClient extends Discord.Client {
         this.activity = msg
     }
 
-    handle(event: string, callback: (data: any) => any): void {
-        this.on(event, callback)
+    initGuildsDB(): void {
+        this.guilds.cache.forEach((guild: Discord.Guild) => {
+            const guildsDb = new Database('guilds')
+            if (!guildsDb.has(guild.id)) {
+                guildsDb.set({[guild.id]: {
+                    language: 'en'
+                }})
+            }
+        })
+    }
+
+    handleWarn() {
+        this.on('warn', (warn: string) => console.log(`WARN MESSAGE: ${warn} \n`))
+    }
+
+    handleDebug() {
+        this.on('debug', (status: string) => console.log(`DEBUG STATUS: ${status}`))
+    }
+
+    handleError() {
+        this.on('error', (e: Error) => new Error(`${e} \n`))
+    }
+
+    handleMessage() {
+        this.on('message', async (message: Discord.Message) => {
+            return await Plugins.evalMessage(message)
+        })
     }
 
     ready(): void {
-        this.handle('ready', () => {
+        this.on('ready', () => {
             (this.user as Discord.ClientUser).setActivity(this.activity, { type: 'WATCHING' })
 
-            this.handle('warn', (e: Error) => new Error(`WARN ${e} \n`))
-            this.handle('error', (e: Error) => new Error(`${e} \n`))
-            this.handle('debug', (status: any) => console.log(`DEBUG STATUS: ${status}`))
-            this.handle('message', async (message: Discord.Message) => {
-                return await Plugins.evalMessage(message)
-            })
+            this.handleWarn()
+            this.handleDebug()
+            this.handleError()
+            this.handleMessage()
+
+            // Create the guilds settings
+            this.initGuildsDB()
         })
     }
 
