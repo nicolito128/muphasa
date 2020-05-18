@@ -17,32 +17,20 @@ export class CustomClient extends Discord.Client {
         this.activity = msg
     }
 
-    handleErrors(): void {
-        this.on('error', e => new Error(`${e} \n`))
-    }
-
-    handleWarns(): void {
-        this.on('warn', e => new Error(`WARN STATUS: ${e}\n`))
-    }
-
-    handleDebug(): void {
-        this.on('debug', e => console.log(`DEBUG STATUS: ${e}\n`))
-    }
-
-    handleMessage(): void {
-        this.on('message', async (message: Discord.Message) => {
-            return await Plugins.evalMessage(message)
-        })
+    handle(event: string, callback: (data: any) => any): void {
+        this.on(event, callback)
     }
 
     ready(): void {
-        this.on('ready', () => {
+        this.handle('ready', () => {
             (this.user as Discord.ClientUser).setActivity(this.activity, { type: 'WATCHING' })
 
-            this.handleErrors()
-            this.handleWarns()
-            this.handleDebug()
-            this.handleMessage()
+            this.handle('warn', (e: Error) => new Error(`WARN ${e} \n`))
+            this.handle('error', (e: Error) => new Error(`${e} \n`))
+            this.handle('debug', (status: any) => console.log(`DEBUG STATUS: ${status}`))
+            this.handle('message', async (message: Discord.Message) => {
+                return await Plugins.evalMessage(message)
+            })
         })
     }
 
