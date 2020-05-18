@@ -5,7 +5,7 @@ interface IData {
     [k: string]: ReturnType;
 }
 
-type ReturnType = string | string[] | number | number[] | IData | IData[] | null;
+type ReturnType = string | string[] | number | number[] | boolean | IData | IData[] | null;
 
 const root: string = __dirname + `/../db/`
 
@@ -26,8 +26,7 @@ export function createDb(name: string): void {
 export function deleteDb(name: string): void {
     const path: string = root + `${name}.json`
     if (fs.existsSync(path)) {
-        fs.unlink(path, (err: Error) => {
-            if (err) throw err;
+        fs.unlink(path, () => {
             console.log(`${path} was deleted!`);
         })
     }
