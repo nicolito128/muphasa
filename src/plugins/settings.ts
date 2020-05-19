@@ -1,9 +1,8 @@
 import { Embed } from "./../../lib/embed"
 import { Database, IData } from "./../../lib/json-db"
 
-type languages = 'en' | 'es'
-
 const guilds = new Database('guilds')
+const validLanguages: string[] = ['es', 'en']
 
 export const commands: Types.ICommands = {
     language({message, user, targets}) {
@@ -12,18 +11,14 @@ export const commands: Types.ICommands = {
             if (!global.Config.owners.includes(user.id)) return message.channel.send(Embed.denied())
         }
 
-        const lang: languages | string = targets.join(' ').toLowerCase().trim()
-        if (!lang) return message.channel.send('Debes especificar un idioma.')
-        if (lang != 'en') {
-            if (lang != 'es') {
-                return message.channel.send('¡Idioma inválido! Sólo están disponibles: `en (English) | es (Español)`')
-            }
-        }
+        const lang: string = targets.join(' ').toLowerCase().trim()
+        if (!lang) return message.channel.send('Especifica un idioma.')
+        if (!validLanguages.includes(lang)) return message.channel.send('¡Idioma inválido! Sólo están disponibles: `en (English) | es (Español)`')
 
         const id: string = message.member.guild.id
         if ((guilds.get(id) as IData).language === lang) return message.channel.send('El idioma que intentas definir ya se está utilizando actualmente en el servidor')
 
-        guilds.set({[id]: lang})
+        guilds.set({[id]: {language: lang}})
         message.channel.send(`¡\`${lang}\` definido correctamente como idioma del servidor!`)
     }
 }
