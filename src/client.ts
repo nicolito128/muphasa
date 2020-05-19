@@ -23,7 +23,7 @@ export class CustomClient extends Discord.Client {
             const guildsDb = new Database('guilds')
             if (!guildsDb.has(guild.id)) {
                 guildsDb.set({[guild.id]: {
-                    language: 'en'
+                    language: 'es'
                 }})
             }
         })
