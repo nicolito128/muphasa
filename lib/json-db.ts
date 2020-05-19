@@ -1,16 +1,18 @@
 'use strict';
 import * as fs from "fs"
 
-interface IData {
-    [k: string]: ReturnType;
+export interface IData {
+    [k: string]: SpectedType;
 }
 
-type ReturnType = string | string[] | number | number[] | boolean | IData | IData[] | null;
+type SpectedType = IData | IData[] | string | number | boolean | null
 
 const root: string = __dirname + `/../db/`
 
-function strictType(value: ReturnType): string {
+function strictType(value: any): string {
     if (value instanceof Array) return 'array'
+    if (value instanceof Set) return 'set'
+    if (value instanceof Map) return 'map'
     if (value === null) return 'null'
     return typeof value
 }
@@ -66,15 +68,15 @@ export class Database {
         return this
     }
 
-    put(key: string, value: ReturnType, concatArrays?: boolean): Database | null {
+    put(key: string, value: SpectedType, concatArrays?: boolean): Database | null {
         const keyType: string = strictType(this.data[key])
 
         switch(keyType) {
             case 'array':
                 if (concatArrays && value instanceof Array) {
-                    (this.data[key] as ReturnType[]) = (this.data[key] as unknown as ReturnType[]).concat(value)
+                    (this.data[key] as SpectedType[]) = (this.data[key] as SpectedType[]).concat(value)
                 } else {
-                    (this.data[key] as unknown as ReturnType[]).push(value)
+                    (this.data[key] as SpectedType[]).push(value)
                 }
                 
                 break;
@@ -103,7 +105,7 @@ export class Database {
         return this
     }
 
-    get(key: string): ReturnType {
+    get(key: string): SpectedType {
         if (!this.has(key)) return null
         return this.data[key]
     }
@@ -116,7 +118,7 @@ export class Database {
         return Object.keys(this.data)
     }
 
-    values(): ReturnType[] {
+    values(): SpectedType[] {
         return Object.values(this.data)
     }
 
