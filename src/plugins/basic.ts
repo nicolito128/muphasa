@@ -3,7 +3,7 @@ import { Embed, CustomEmbed } from "../../lib/embed"
 
 type RGB = {r: number, g: number, b: number}
 
-const githubUrl: string = 'https://github.com/nicolito128/Muphasa-bot'
+const githubUrl: string = 'https://github.com/nicolito128/type-muphasa'
 
 const getHexValue = (n: number): string => Number(n).toString(16)
 const rgbToHex = (r: number, g: number, b: number): string => {
