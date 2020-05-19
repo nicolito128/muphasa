@@ -35,7 +35,7 @@ export const commands: Types.ICommands = {
         message.channel.send(
             Embed.notify(
                 '',
-                `\`${global.Config.prefix}${target}${(helps[target].usage) ? ' < ' + helps[target].usage + ' > ' : ''}\` ${helps[target].info}`
+                [`\`${global.Config.prefix}${target}${(helps[target].usage) ? ' < ' + helps[target].usage + ' > ' : ''}\``].concat(helps[target].info)
             )
         )
     },
@@ -44,8 +44,8 @@ export const commands: Types.ICommands = {
         const helps: Types.IHelps = global.Plugins.getHelps()
         const topicList: string[] = global.Plugins.getTopics()
         const embedTopicInvalid: CustomEmbed = Embed.notify(
-            'Topics',
-            `Listas de comandos a consultar: \`${topicList.join(' | ')}\``
+            'Listas de comandos',
+            topicList.map(t => '`' + t + '`')
         );
         let topic: string = targets[0]
         if (!topic) return message.channel.send(embedTopicInvalid)
