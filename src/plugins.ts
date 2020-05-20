@@ -69,11 +69,13 @@ export class PluginsHandler {
     evalMessage(message: Message): void {
         if (message.content.startsWith(Config.prefix)) {
             const params: ICommandParams = this.parseCommand(message)
-            return this.getCommand(message)({...params})
+            const command: ICommandHandler | undefined = this.getCommand(message)
+
+            if (command) return command({...params})
         }
     }
 
-    getCommand(message: Message): ICommandHandler {
+    getCommand(message: Message): ICommandHandler | undefined {
         const {cmd} = this.parseCommand(message)
         return this.commands.get(cmd)
     }
