@@ -28,7 +28,7 @@ export const commands: Types.ICommands = {
         if (!targets[0]) return message.channel.send('Ingresa un comando del cual quieras obtener información.')
 
         const target: string = targets[0].toLowerCase()
-        const help = Plugins.getHelp(target)
+        const help = global.Plugins.getHelp(target)
         if (!help) return message.channel.send('No hay ayuda disponible sobre este comando o no existe.')
 
         message.channel.send(
