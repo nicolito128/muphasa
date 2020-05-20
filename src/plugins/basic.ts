@@ -25,17 +25,16 @@ const hexToRgb = (hex: string): RGB | null => {
 
 export const commands: Types.ICommands = {
     help({message, targets}) {
-        const helps = global.Plugins.getHelps()
-
         if (!targets[0]) return message.channel.send('Ingresa un comando del cual quieras obtener información.')
 
-        const target = targets[0].toLowerCase()
-        if (!helps[target]) return message.channel.send('No hay ayuda disponible sobre este comando o no existe.')
+        const target: string = targets[0].toLowerCase()
+        const help = global.Plugins.getHelp(target)
+        if (!help) return message.channel.send('No hay ayuda disponible sobre este comando o no existe.')
 
         message.channel.send(
             Embed.notify(
                 '',
-                [`\`${global.Config.prefix}${target}${(helps[target].usage) ? ' < ' + helps[target].usage + ' > ' : ''}\``].concat(helps[target].info)
+                [`\`${global.Config.prefix}${target}${(help.usage) ? ' < ' + help.usage + ' > ' : ''}\``].concat(help.info)
             )
         )
     },

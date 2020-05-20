@@ -69,19 +69,18 @@ export class PluginsHandler {
     evalMessage(message: Message): void {
         if (message.content.startsWith(Config.prefix)) {
             const params: ICommandParams = this.parseCommand(message)
-            const command: ICommandHandler | undefined = this.getCommand(message)
+            const command: ICommandHandler | undefined = this.getCommand(params.cmd as string)
 
             if (command) return command({...params})
         }
     }
 
-    getCommand(message: Message): ICommandHandler | undefined {
-        const {cmd} = this.parseCommand(message)
+    getCommand(cmd: string): ICommandHandler | undefined {
         return this.commands.get(cmd)
     }
 
-    getHelps(): IHelps {
-        return this.helps.getAll() as IHelps
+    getHelp(help: string): IHelpData | undefined {
+        return this.helps.get(help)
     }
 
     getTopics(): string[] {
