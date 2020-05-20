@@ -5,7 +5,7 @@
  * running to start the bot if you're using it normally.
  * 
 */
-'use strict';
+
 // Check for version
 try {
 	RegExp("\\p{Emoji}", "u");

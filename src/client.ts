@@ -1,4 +1,3 @@
-'use strict';
 import * as Discord from "discord.js"
 import * as Config from "./../config/config.js"
 import { Database } from './../lib/json-db'

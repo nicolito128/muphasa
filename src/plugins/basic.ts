@@ -1,4 +1,3 @@
-'use strict';
 import { Embed, CustomEmbed } from "../../lib/embed"
 
 type RGB = {r: number, g: number, b: number}
