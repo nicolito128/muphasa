@@ -83,6 +83,10 @@ export class PluginsHandler {
         return this.helps.get(help)
     }
 
+    getHelps(): IHelps {
+        return this.helps.getAll() as IHelps
+    }
+
     getTopics(): string[] {
         let topics: Set<string> = new Set()
         this.helps.forEach((value: any) => {
