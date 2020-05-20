@@ -1,25 +1,29 @@
 import { Embed } from "./../../lib/embed"
+import { LanguageHandler } from"./../../lib/language"
 import { Database, IData } from "./../../lib/json-db"
 
+const language = new LanguageHandler('settings')
 const guilds = new Database('guilds')
 const validLanguages: string[] = ['es', 'en']
 
 export const commands: Types.ICommands = {
-    language({message, user, targets}) {
+    async language({message, user, targets}) {
         if (message.member === null) return message.channel.send('Este comando sólo puede ser utilizado en un servidor.')
         if (!message.member.hasPermission('ADMINISTRATOR')) {
             if (!global.Config.owners.includes(user.id)) return message.channel.send(Embed.denied())
         }
-
-        const lang: string = targets.join(' ').toLowerCase().trim()
-        if (!lang) return message.channel.send('Especifica un idioma.')
-        if (!validLanguages.includes(lang)) return message.channel.send('¡Idioma inválido! Sólo están disponibles: `en (English) | es (Español)`')
-
         const id: string = message.member.guild.id
-        if ((guilds.get(id) as IData).language === lang) return message.channel.send('El idioma que intentas definir ya se está utilizando actualmente en el servidor')
+        language.setGuildId(id)
+
+        const target: string  = targets.join(' ').toLowerCase().trim()
+        if (!target) return message.channel.send(language.use('langNotExist'))
+        if (!validLanguages.includes(target)) return message.channel.send(language.use('invalidLanguage'))
+        const lang: 'en' | 'es' = target as 'en' | 'es'
+
+        if ((guilds.get(id) as IData).language === lang) return message.channel.send(language.use('langInUse'))
 
         guilds.set({[id]: {language: lang}})
-        message.channel.send(`¡\`${lang}\` definido correctamente como idioma del servidor!`)
+        message.channel.send(language.useByLang('setLanguage', lang))
     }
 }
 
