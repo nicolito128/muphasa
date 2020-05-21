@@ -28,10 +28,11 @@ interface ICommandParams {
     message: Message;
     user: Discord.User;
     targets: string[];
+    guild: Discord.Guild | null;
     cmd: string | undefined;
 }
 
-type ICommandHandler = ({message, user, targets, cmd}: ICommandParams) => any;
+type ICommandHandler = ({message, user, targets, guild, cmd}: ICommandParams) => any;
 
 // Collection
 type CollectionReturnType = ICommands | IHelps
@@ -98,8 +99,9 @@ export class PluginsHandler {
         let user: Discord.User = message.author
         let targets: string[] = message.content.slice(Config.prefix.length).trim().split(' ')
         let cmd: string | undefined = targets?.shift()?.toLowerCase()
+        let guild: Discord.Guild | null = (message.member) ? message.member.guild : null
 
-        return {message, user, targets, cmd}
+        return {message, user, targets, guild, cmd}
     }
 
     loadPlugins(): void {

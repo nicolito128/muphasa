@@ -7,12 +7,12 @@ const guilds = new Database('guilds')
 const validLanguages: string[] = ['es', 'en']
 
 export const commands: Types.ICommands = {
-    async language({message, user, targets}) {
-        if (message.member === null) return message.channel.send('Este comando sólo puede ser utilizado en un servidor.')
-        if (!message.member.hasPermission('ADMINISTRATOR')) {
+    language({message, user, guild, targets}) {
+        if (!guild) return message.channel.send('Este comando sólo puede ser utilizado en un servidor.')
+        if (message.member && !message.member.hasPermission('ADMINISTRATOR')) {
             if (!global.Config.owners.includes(user.id)) return message.channel.send(Embed.denied())
         }
-        const id: string = message.member.guild.id
+        const id: string = guild.id
         language.setGuildId(id)
 
         const target: string  = targets.join(' ').toLowerCase().trim()
