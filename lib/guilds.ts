@@ -1,3 +1,9 @@
+/**
+ * Guilds Handler System
+ * @author Nicolás Serna
+ * 
+ * Logic responsible for adding, removing or obtaining information about guilds settings.
+**/
 import { Database, IData, SpectedType } from './json-db'
 
 export interface IGuildData {
