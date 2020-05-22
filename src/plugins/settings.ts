@@ -7,6 +7,7 @@ const guilds = new Database('guilds')
 const validLanguages: string[] = ['es', 'en']
 
 export const commands: Types.ICommands = {
+    lang: 'language',
     language({message, user, guild, targets}) {
         if (!guild) return message.channel.send('Este comando sólo puede ser utilizado en un servidor.')
         if (message.member && !message.member.hasPermission('ADMINISTRATOR')) {

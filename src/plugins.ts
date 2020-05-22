@@ -21,7 +21,7 @@ interface IHelpData {
 
 // Commands
 export interface ICommands {
-    [c: string]: ICommandHandler
+    [c: string]: ICommandHandler | string
 }
 
 interface ICommandParams {
@@ -133,24 +133,31 @@ export class PluginsHandler {
 
         if (plugin.commands) {
             Object.keys(plugin.commands).forEach((key: string) => {
-                value = plugin.commands[key]
+                value = plugin.commands[key] as ICommandHandler
                 this.commands.insert(key, value)
             })
         }
 
         if (plugin.help) {
             Object.keys(plugin.help).forEach((key: string) => {
-                value = plugin.help[key]
+                value = plugin.help[key] as IHelpData
                 this.helps.insert(key, value)
             })
         }
     }
 
     filterPlugin(plugin: IPluginStruct): IPluginStruct {
+        let commandAlias: string
+
         if (plugin.commands) {
             Object.keys(plugin.commands).forEach((key: string) => {
                 if (typeof plugin.commands[key] != 'function') {
-                    delete plugin.commands[key]
+                    if (typeof plugin.commands[key] == 'string') {
+                        commandAlias = plugin.commands[key] as string
+                        if (plugin.commands.hasOwnProperty(commandAlias)) plugin.commands[key] = plugin.commands[commandAlias]
+                    } else {
+                        delete plugin.commands[key]
+                    }
                 }
             })
         }
@@ -158,9 +165,9 @@ export class PluginsHandler {
         if (plugin.help) {
             Object.keys(plugin.help).forEach((key: string) => {
                 // Check if the help is a string or an array
-                if (typeof (plugin.help as unknown as IHelps)[key].info != 'string')  {
+                if (typeof (plugin.help as IHelps)[key].info != 'string')  {
                     // If this is false: remove the no-helper
-                    if (!Array.isArray((plugin.help as unknown as IHelps)[key].info)) delete plugin.help[key]
+                    if (!Array.isArray((plugin.help as IHelps)[key].info)) delete plugin.help[key]
                 }
             })
         }
