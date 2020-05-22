@@ -5,7 +5,7 @@ export interface IData {
     [k: string]: SpectedType;
 }
 
-type SpectedType = IData | IData[] | string | number | boolean | null
+export type SpectedType = IData | IData[] | string | number | boolean
 
 const root: string = __dirname + `/../db/`
 
@@ -62,16 +62,14 @@ export class Database {
         this.loadData()
     }
 
-    set(obj: IData, callback?: () => void): Database {
+    set(obj: IData): Database {
         Object.assign(this.data, obj)
 
         this.write()
-        if (callback) this.call(callback)
-
         return this
     }
 
-    put(key: string, value: SpectedType, concatArrays?: boolean, callback?: () => void): Database | null {
+    put(key: string, value: SpectedType, concatArrays?: boolean): Database | null {
         const keyType: string = strictType(this.data[key])
 
         switch(keyType) {
@@ -97,24 +95,30 @@ export class Database {
         }
 
         this.write()
-        if (callback) this.call(callback)
+        return this
+    }
+
+    remove(key: string): Database {
+        if (this.has(key)) {
+            delete this.data[key]
+            this.write()
+        }
 
         return this
     }
 
-    remove(key: string, callback?: () => void): Database | null {
-        if (!this.has(key)) return null
-        delete this.data[key]
-
-        this.write()
-        if (callback) this.call(callback)
+    removePropertyOfObjectKey(key: string, prop: string): Database {
+        if (strictType(this.data[key]) == 'object' && (this.data[key] as IData).hasOwnProperty(prop)) {
+            delete (this.data[key] as IData)[prop]
+            this.write()
+        }
 
         return this
     }
 
-    get(key: string): SpectedType {
-        if (!this.has(key)) return null
-        return this.data[key]
+    get(key: string): SpectedType | void {
+        if (this.has(key)) return this.data[key]
+        return undefined as void
     }
 
     has(key: string): boolean {
