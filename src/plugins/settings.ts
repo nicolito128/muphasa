@@ -1,9 +1,8 @@
 import { Embed } from "./../../lib/embed"
 import { LanguageHandler } from"./../../lib/language"
-import { Database, IData } from "./../../lib/json-db"
+import { Guilds, IGuildData } from "./../../lib/guilds"
 
 const language = new LanguageHandler('settings')
-const guilds = new Database('guilds')
 const validLanguages: string[] = ['es', 'en']
 
 export const commands: Types.ICommands = {
@@ -21,9 +20,9 @@ export const commands: Types.ICommands = {
         if (!validLanguages.includes(target)) return message.channel.send(language.use('invalidLanguage'))
         const lang: 'en' | 'es' = target as 'en' | 'es'
 
-        if ((guilds.get(id) as IData).language === lang) return message.channel.send(language.use('langInUse'))
+        if ((Guilds.get(id) as IGuildData).language === lang) return message.channel.send(language.use('langInUse'))
 
-        guilds.set({[id]: {language: lang}})
+        Guilds.set(id, {language: lang})
         message.channel.send(language.useByLang('setLanguage', lang))
     }
 }
