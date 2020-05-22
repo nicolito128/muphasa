@@ -1,3 +1,9 @@
+/**
+ * Json Handler System for Muphasa
+ * @author Nicolás Serna
+ * 
+ * This functionality is responsible for managing a folder of .json files.
+**/
 import * as fs from "fs"
 
 export interface IData {
@@ -47,7 +53,7 @@ export class Database {
         this.loadData()
     }
 
-    loadData(): void {
+    private loadData(): void {
         const buff: Buffer = fs.readFileSync(this.path)
         this.data = JSON.parse(buff.toString())
     }
@@ -61,6 +67,10 @@ export class Database {
         this.loadData()
     }
 
+    /**
+     * @todo Set or overwrite properties in the file.
+     * @example set({[key]: value})
+     */
     set(obj: IData): Database {
         Object.assign(this.data, obj)
 
@@ -68,6 +78,13 @@ export class Database {
         return this
     }
 
+
+    /**
+     * 
+     * @todo Modification of a property based on the specified value. For example: if the property (key) contains a number and value is a number, then they will be added together.
+     * @example put('names', ['Carl', 'Jimmy'], true)
+     * @example put('age', 1)
+     */
     put(key: string, value: SpectedType, concatArrays?: boolean): Database | null {
         const keyType: string = strictType(this.data[key])
 
@@ -97,6 +114,9 @@ export class Database {
         return this
     }
 
+    /**
+     * @todo Remove a property
+     */
     remove(key: string): Database {
         if (this.has(key)) {
             delete this.data[key]
@@ -106,6 +126,9 @@ export class Database {
         return this
     }
 
+    /**
+     * @todo Delete a property inside an object property
+     */
     removePropertyOfObjectKey(key: string, prop: string): Database {
         if (strictType(this.data[key]) == 'object' && (this.data[key] as IData).hasOwnProperty(prop)) {
             delete (this.data[key] as IData)[prop]
@@ -115,11 +138,17 @@ export class Database {
         return this
     }
 
+    /**
+     * @todo Get a key value
+     */
     get(key: string): SpectedType | void {
         if (this.has(key)) return this.data[key]
         return undefined as void
     }
 
+    /**
+     * @todo Check if a property exists
+     */
     has(key: string): boolean {
         return this.data.hasOwnProperty(key)
     }
