@@ -13,8 +13,10 @@
     },
     "dependencies": {
         "@types/node": "^14.0.1",
+        "@types/superagent": "^4.1.7",
         "discord.js": "^12.2.0",
-        "sucrase": "^3.14.0"
+        "sucrase": "^3.14.0",
+        "superagent": "^5.2.2"
     },
     "url": "",
     "license": "MIT"
