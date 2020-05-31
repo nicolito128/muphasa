@@ -11,7 +11,7 @@ function generateRandomHex(): string {
     let hex: string = '#';
 
     for (let i = 0, l = hexNumbers.length; i < 6; i++) {
-        random = Math.round(Math.random() * (l - 1))
+        random = Math.round(Math.random() * l)
         hex += hexNumbers[random]
     }
 
