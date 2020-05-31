@@ -1,4 +1,5 @@
-import { Embed, CustomEmbed } from "../../lib/embed"
+import { Embed, CustomEmbed } from '../../lib/embed'
+import { toId } from '../../lib/text'
 
 type RGB = {r: number, g: number, b: number}
 
@@ -26,7 +27,7 @@ export const commands: Types.ICommands = {
     help({message, targets}) {
         if (!targets[0]) return message.channel.send('Ingresa un comando del cual quieras obtener información.')
 
-        const target: string = targets[0].toLowerCase()
+        const target: string = toId(targets.join())
         const help = global.Plugins.getHelp(target)
         if (!help) return message.channel.send('No hay ayuda disponible sobre este comando o no existe.')
 
@@ -45,7 +46,7 @@ export const commands: Types.ICommands = {
             'Listas de comandos',
             topicList.map(t => '`' + t + '`')
         );
-        let topic: string = targets[0]
+        let topic: string = toId(targets.join())
         if (!topic) return message.channel.send(embedTopicInvalid)
 
         topic = targets[0].toLowerCase().trim()
