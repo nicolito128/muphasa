@@ -145,7 +145,34 @@ export const commands: Types.ICommands = {
                 [`\`HEX: #${hex}\``, `\`RGB: ${rgbInEmbed}\``],
                 'transparent').setImage(image)
         )
-    }
+    },
+
+    avatar({message, user, targets}) {
+        let targetUser;
+        if (targets.length < 1) {
+            targetUser = user
+        } else {
+            targetUser = message.mentions.users.first()
+        }
+
+        if (typeof targetUser !== 'object') return message.channel.send('No especificaste un usuario valido.')
+
+        let avatar = targetUser.displayAvatarURL()
+
+        if (targetUser.avatar?.startsWith('a_')) {
+            avatar = avatar.replace('.webp', '.gif')
+        } else {
+            avatar = avatar.replace('.webp', '.png')
+        }
+
+        message.channel.send(
+            Embed.notify(
+                `${targetUser.username}#${targetUser.discriminator}'s avatar`,
+                [`[Buscar en Google](https://www.google.com/searchbyimage?image_url=${avatar})`]
+                )
+                .setImage(avatar + '?size=1024')
+        )
+    },
 }
 
 export const help: Types.IHelps = {
@@ -178,9 +205,15 @@ export const help: Types.IHelps = {
         info: 'Muestra una imagen completamente del color hex/rgb ingresado.'
     },
 
+    avatar: {
+        topic: 'basic',
+        usage: 'mention[optional]',
+        info: 'Muestra tu avatar o el de otro usuario.'
+    },
+
     eval: {
         topic: 'admin',
         usage: 'code',
         info: 'Evalua código JavaScript y luego muestra el resultado.'
-    },
+    }
 }
