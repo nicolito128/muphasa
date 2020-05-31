@@ -91,12 +91,12 @@ function parseMessageToPokemon(message: string): PokemonTarget {
                 data.specie = 'charizard-mega-y'
             }
         } else {
-            data.specie = toId(message.replace(/(-mega$|-mega\s)/g, ''))
+            data.specie = message.replace(/(-mega$|-mega\s)/g, '').toLowerCase()
         }
 
         data.mega = true
     } else {
-        data.specie = toId(message)
+        data.specie = message.toLowerCase()
     }
 
     return data
@@ -131,6 +131,10 @@ export const commands: Types.ICommands = {
                 } else {
                     poke = await getPokemonFromApi(target.specie + '-mega')
                 }
+            }
+
+            if (target.specie.includes('aegislash')) {
+                poke = await getPokemonFromApi('aegislash-shield')
             } else {
                 poke = await getPokemonFromApi(target.specie)
             }
