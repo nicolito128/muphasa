@@ -39,6 +39,7 @@ export const commands: Types.ICommands = {
         )
     },
 
+    topics: 'topic',
     topic({message, targets}) {
         const helps: Types.IHelps = global.Plugins.getHelps()
         const topicList: string[] = global.Plugins.getTopics()
