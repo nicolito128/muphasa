@@ -180,3 +180,11 @@ export const commands: Types.ICommands = {
         message.channel.send(pokeEmbed)
     }
 }
+
+export const help: Types.IHelps = {
+    dex: {
+        topic: 'pokemon',
+        usage: 'pokemon',
+        info: 'Obten información sobre un Pokémon.'
+    }
+}
