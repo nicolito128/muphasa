@@ -1,6 +1,7 @@
-import * as Discord from "discord.js"
-import * as Config from "./../config/config.js"
-import * as fs from "fs"
+import * as fs from 'fs'
+import * as Discord from 'discord.js'
+import * as Config from './../config/config.js'
+import { Guilds } from '../lib/guilds'
 
 export interface IPluginStruct {
     [p: string]: CollectionReturnType
@@ -67,8 +68,11 @@ export class PluginsHandler {
     }
 
     evalMessage(message: Message): void {
-        if (message.content.startsWith(Config.prefix)) {
-            const params: ICommandParams = this.parseCommand(message)
+        let prefix: string = Config.prefix
+        if (message.member) prefix = Guilds.getPrefix(message.member.guild.id)
+
+        if (message.content.startsWith(prefix)) {
+            const params: ICommandParams = this.parseCommand(message, prefix)
             let command: ICommandHandler | undefined
 
             if (params.cmd) command = this.getCommand(params.cmd)
@@ -96,9 +100,9 @@ export class PluginsHandler {
         return [...topics]
     }
 
-    parseCommand(message: Message): ICommandParams {
+    parseCommand(message: Message, prefix: string): ICommandParams {
         let user: Discord.User = message.author
-        let targets: string[] = message.content.slice(Config.prefix.length).trim().split(' ')
+        let targets: string[] = message.content.slice(prefix.length).trim().split(' ')
         let cmd: string | undefined = targets?.shift()?.toLowerCase()
         let guild: Discord.Guild | null = (message.member) ? message.member.guild : null
 

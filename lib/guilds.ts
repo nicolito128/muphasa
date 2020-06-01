@@ -4,6 +4,7 @@
  * 
  * Logic responsible for adding, removing or obtaining information about guilds settings.
 **/
+import * as Config from '../config/config.js'
 import { Database, IData, SpectedType } from './json-db'
 
 export interface IGuildData {
@@ -35,8 +36,8 @@ class GuildsHandler {
         return this
     }
 
-    get(guildId: string): IGuildData | void {
-        return this.data.get(guildId) as IGuildData | void
+    get(guildId: string): IGuildData {
+        return this.data.get(guildId) as IGuildData
     }
 
     setGlobalKey(key: string, value: SpectedType): GuildsHandler {
@@ -58,6 +59,12 @@ class GuildsHandler {
         })
 
         return this
+    }
+
+    getPrefix(guildId: string): string {
+        const cur: IGuildData = this.data.get(guildId) as IGuildData
+        if (cur.prefix) return cur.prefix;
+        return Config.prefix
     }
 }
 
