@@ -64,6 +64,7 @@ export const commands: Types.ICommands = {
 
             const embedInfo = Embed.notify('', '')
             .setAuthor(guild.name, guild.iconURL() || "")
+            .setThumbnail(guild.iconURL() || "")
             .addField('Presences', `:green_circle: ${status.online} ㅤ:yellow_circle: ${status.idle} ㅤ:red_circle: ${status.dnd}`)
             .addField('Members', members, true)
             .addField('Bots', bots, true)
