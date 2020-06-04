@@ -61,12 +61,10 @@ class GuildsHandler {
         return this
     }
 
-    getPrefix(guildId?: string): string {
-        if (guildId) {
-            const cur: IGuildData | void = this.data.get(guildId || "") as IGuildData | void
-            if (cur && cur.hasOwnProperty('prefix')) return cur.prefix as string;
-        }
-        
+    getPrefix(guildId: string): string {
+        const cur: IGuildData | void = this.data.get(guildId) as IGuildData | void
+        if (cur && cur.prefix && cur.prefix != '') return cur.prefix;
+
         return Config.prefix
     }
 }
