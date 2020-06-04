@@ -1,5 +1,6 @@
 import { Embed, CustomEmbed } from '../../lib/embed'
 import { toId } from '../../lib/text'
+import { Guilds } from '../../lib/guilds'
 
 type RegionType = "brazil" | "eu-central" | "singapore" | "us-central" | "sydney" | "us-east" | "us-south" | "us-west" | "eu-west" | "vip-us-east" | "london" | "amsterdam" | "hongkong" | "russia" | "southafrica"
 
@@ -76,6 +77,15 @@ export const commands: Types.ICommands = {
         }
     },
 
+    ping({message}) {
+        message.channel.send('**:ping_pong: Ping!**').then(msg => {
+            msg.edit(Embed.notify(':ping_pong: Pong!', [
+                `Latency: ${msg.createdTimestamp - message.createdTimestamp}ms`,
+                `API Latency ${Math.round(global.Client.ws.ping)}ms`
+            ]))
+        })
+    },
+
     lovee({message, guild}) {
         if (guild) {
             guild.members.cache.filter((member) => {
@@ -90,19 +100,21 @@ export const commands: Types.ICommands = {
         }
     },
 
-    help({message, targets}) {
+    help({message, targets, guild}) {
         if (!targets[0]) return message.channel.send('Ingresa un comando del cual quieras obtener información.')
 
-        const target: string = toId(targets.join())
+        const target: string = targets.join()
         const help = global.Plugins.getHelp(target)
+        let id: string = ""
         if (!help) return message.channel.send('No hay ayuda disponible sobre este comando o no existe.')
+        if (guild) id = guild.id
 
-        message.channel.send(
-            Embed.notify(
-                '',
-                [`\`${global.Config.prefix}${target}${(help.usage) ? ' < ' + help.usage + ' > ' : ''}\``].concat(help.info)
-            )
-        )
+        const embed = Embed.notify(target, [
+            `**Usage**: \`${Guilds.getPrefix(id)}${target}${(help.usage) ? ' < ' + help.usage + ' > ' : ''}\``,
+            `**Info**: ${help.info}`
+        ])
+
+        message.channel.send(embed)
     },
 
     topics: 'topic',
@@ -181,12 +193,12 @@ export const commands: Types.ICommands = {
 
         const randomNumber: number = Math.round(Math.random() * (num + 1))
         message.channel.send(
-            Embed.notify('Random num', `\`${randomNumber}\``)
+            Embed.notify('Random number', `\`${randomNumber}\``)
         )
     },
 
     hex({message, targets}) {
-        let hex: string, rgb: RGB | null, rgbInEmbed: string
+        let hex: string, rgb: RGB | null, rgbInEmbed: string = ''
         let image: string = 'https://dummyimage.com/1000x1000/'
 
         if (!targets || !targets[0]) return message.channel.send(`No ingresaste ningún color para mostrar. Para más información usa \`${global.Config.prefix}help hex\``)
@@ -199,13 +211,14 @@ export const commands: Types.ICommands = {
             })
 
             hex = rgbToHex(targetsParsed[0], targetsParsed[1], targetsParsed[2])
+            rgbInEmbed = `${targetsParsed[0]} ${targetsParsed[1]} ${targetsParsed[2]}`
         } else {
             hex = targets[0]
         }
 
         image += `${hex}/${hex}`
         rgb = hexToRgb(hex.toString())
-        rgbInEmbed = rgb ? (rgb as RGB).r.toString() + ' ' + (rgb as RGB).g.toString() + ' ' + (rgb as RGB).b.toString() : 'NaN'
+        if (!rgbInEmbed) rgbInEmbed = rgb ? (rgb as RGB).r.toString() + ' ' + (rgb as RGB).g.toString() + ' ' + (rgb as RGB).b.toString() : 'NaN'
 
         message.channel.send(
             Embed.notify(
@@ -244,6 +257,16 @@ export const commands: Types.ICommands = {
 }
 
 export const help: Types.IHelps = {
+    server: {
+        topic: 'basic',
+        info: 'Muestra información general sobre el servidor.'
+    },
+
+    ping: {
+        topic: 'basic',
+        info: 'Consulta los tiempos de respuesta del bot.'
+    },
+
     say: {
         topic: 'basic',
         usage: 'message',
@@ -252,7 +275,7 @@ export const help: Types.IHelps = {
 
     github: {
         topic: 'basic',
-        info: 'Muestra el enlace al código fuente del BOT y datos sobre el desarrollo.'
+        info: 'Muestra el enlace al código fuente del BOT y datos sobre su desarrollo.'
     },
 
     pick: {
