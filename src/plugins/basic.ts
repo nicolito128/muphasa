@@ -249,10 +249,14 @@ export const commands: Types.ICommands = {
 
         message.channel.send(
             Embed.notify(
-                `${targetUser.username}#${targetUser.discriminator}'s avatar`,
-                [`[Buscar en Google](https://www.google.com/searchbyimage?image_url=${avatar})`]
+                '',
+                [
+                    `[Avatar link](${avatar})`,
+                    `[Buscar en Google](https://www.google.com/searchbyimage?image_url=${avatar})`
+                ]
                 )
                 .setImage(avatar + '?size=1024')
+                .setAuthor(`${targetUser.username}#${targetUser.discriminator}'s avatar`, avatar)
         )
     },
 }
