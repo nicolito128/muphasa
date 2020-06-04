@@ -36,10 +36,6 @@ export const commands: Types.ICommands = {
         if (prefix.length < 1) return message.channel.send('El prefix personalizado no puede ser tan corto.')
         if (prefix.length >= 10) return message.channel.send('El prefix personalizado es demásiado largo.')
         if (prefix == Guilds.getPrefix(guild.id)) return message.channel.send('Ya estoy utilizando este prefix.')
-        if (prefix == global.Config.prefix) {
-            Guilds.set(guild.id, {prefix: ''})
-            return message.channel.send(`¡De ahora en adelante utilizaré \`${global.Config.prefix}\` para mis comandos!`)
-        }
 
         Guilds.set(guild.id, {prefix})
         message.channel.send(`¡De ahora en adelante utilizaré \`${prefix}\` para mis comandos!`)
