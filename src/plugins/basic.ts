@@ -52,7 +52,7 @@ const colorAliases: {[k: string]: string} = {
 
 const getHexValue = (n: number): string => Number(n).toString(16)
 
-const rgbToHex = (r: number, g: number, b: number): string => {
+function rgbToHex (r: number, g: number, b: number): string {
     const red: string = getHexValue(r)
     const green: string = getHexValue(g)
     const blue: string = getHexValue(b)
@@ -60,7 +60,7 @@ const rgbToHex = (r: number, g: number, b: number): string => {
     return red + green + blue
 }
 
-const hexToRgb = (hex: string): RGB | null => {
+function hexToRgb(hex: string): RGB | null {
     let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return result ? {
       r: parseInt(result[1], 16),
