@@ -8,7 +8,8 @@ type ColorType = "red" | "orange" | "yellow" | "gold" | "green" | "lemonyellow" 
 
 type RGB = {r: number, g: number, b: number}
 
-const githubUrl: string = 'https://github.com/nicolito128/type-muphasa'
+const githubUrl: string = 'https://github.com/nicolito128/muphasa'
+
 const regions = {
     "brazil": ":flag_br: Brazil",
     "eu-central": ":flag_eu: Central Europe",
@@ -54,6 +55,7 @@ const colorAliases = {
 }
 
 const getHexValue = (n: number): string => Number(n).toString(16)
+
 const rgbToHex = (r: number, g: number, b: number): string => {
     const red: string = getHexValue(r)
     const green: string = getHexValue(g)
