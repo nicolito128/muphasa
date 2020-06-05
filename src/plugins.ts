@@ -113,23 +113,15 @@ export class PluginsLoader {
 
         if (plugin.commands) {
             Object.keys(plugin.commands).forEach((key: string) => {
-                if (typeof plugin.commands[key] != 'function') {
-                    if (typeof plugin.commands[key] == 'string') {
+                switch (typeof plugin.commands[key]) {
+                    case 'string':
                         commandAlias = plugin.commands[key] as string
-                        if (plugin.commands.hasOwnProperty(commandAlias)) plugin.commands[key] = plugin.commands[commandAlias]
-                    } else {
+                        if (plugin.commands.hasOwnProperty(commandAlias)) plugin.commands[key] = plugin.commands[commandAlias];
+                        break;
+                    case 'function':
+                        break;
+                    default:
                         delete plugin.commands[key]
-                    }
-                }
-            })
-        }
-
-        if (plugin.help) {
-            Object.keys(plugin.help).forEach((key: string) => {
-                // Check if the help is a string or an array
-                if (typeof (plugin.help as IHelps)[key].info != 'string')  {
-                    // If this is false: remove the no-helper
-                    if (!Array.isArray((plugin.help as IHelps)[key].info)) delete plugin.help[key]
                 }
             })
         }
