@@ -27,11 +27,11 @@ export class CustomEmbed extends Discord.MessageEmbed {
         return new CustomEmbed(options || {})
     }
 
-    denied(): CustomEmbed {
+    denied(permission?: string): CustomEmbed {
         return this.create()
             .setTitle('Acceso denegado')
             .setColor([213, 41, 32])
-            .setDescription(`No tienes suficiente autoridad para usar este comando.`)
+            .setDescription(`No tienes suficiente autoridad para usar este comando. ${permission ? 'Requiere: `' + permission + '`' : ''}`)
     }
 
     notify(title: string, desc: string | string[], color?: Discord.ColorResolvable): CustomEmbed {
