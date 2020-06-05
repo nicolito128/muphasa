@@ -4,7 +4,7 @@ import { Guilds } from '../../lib/guilds'
 
 type RegionType = "brazil" | "eu-central" | "singapore" | "us-central" | "sydney" | "us-east" | "us-south" | "us-west" | "eu-west" | "vip-us-east" | "london" | "amsterdam" | "hongkong" | "russia" | "southafrica"
 
-type ColorType = "red" | "orange" | "yellow" | "gold" | "green" | "lemon" | "blue" | "cian" | "skyblue" | "lightblue" | "purple" | "violet" | "pink" | "lightpink" | "rose" | "crimson" | "black" | "white" | "gray" | "night" | "brown" | "lightbrown"
+type ColorType = "red" | "orange" | "yellow" | "gold" | "green" | "lemonyellow" | "lemongreen" | "blue" | "cian" | "skyblue" | "lightblue" | "purple" | "violet" | "pink" | "lightpink" | "rose" | "crimson" | "black" | "white" | "gray" | "night" | "brown" | "lightbrown"
 
 type RGB = {r: number, g: number, b: number}
 
@@ -36,7 +36,7 @@ const colorAliases = {
     "lemongreen": "9AD91D",
     "lemonyellow": "D9D01D",
     "blue": "202BD3",
-    "cian": "25DECA",
+    "cian": "29D1BF",
     "skyblue": "76CEEC",
     "lightblue": "00D5EA",
     "purple": "641DD9",
