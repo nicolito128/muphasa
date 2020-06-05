@@ -145,30 +145,35 @@ export const commands: Types.ICommands = {
     },
 
     topics: 'topic',
-    topic({message, targets}) {
+    topic({message, targets, guild}) {
         const helps: Types.IHelps = global.Plugins.getHelps()
         const topicList: string[] = global.Plugins.getTopics()
+        const prefix = Guilds.getPrefix(guild?.id || "")
         const embedTopicInvalid: CustomEmbed = Embed.notify(
             'Listas de comandos',
-            topicList.map(t => '`' + t + '`')
+            [
+                `Consulta las listas usando **${prefix}topic** *topic*`,
+                topicList.map(t => `\`${t}\``).join('\n')
+            ]
         );
         let topic: string = toId(targets.join())
         if (!topic) return message.channel.send(embedTopicInvalid)
-
-        topic = targets[0].toLowerCase().trim()
         if (!topicList.includes(topic)) return message.channel.send(embedTopicInvalid)
 
         let topicData = Object.keys(helps)
             .map((key: string) => {
                 if (helps[key].topic == topic) {
-                    return '`' + global.Config.prefix + key + '`'
+                    return '`' + prefix + key + '`'
                 }
             });
 
         message.channel.send(
             Embed.notify(
                 `Topic: ${topic}`,
-                topicData as string[]
+                [
+                    `Consulta más información sobre un comando usando **${prefix}help** *command*`,
+                    (topicData as string[]).join('\n')
+                ]
             )
         )
     },
@@ -224,13 +229,13 @@ export const commands: Types.ICommands = {
         )
     },
 
-    hex({message, targets}) {
+    hex({message, targets, guild}) {
         let hex: string = '',
             rgb: RGB | null = null,
             rgbInEmbed: string = '',
             image: string = 'https://dummyimage.com/1000x1000/';
 
-        if (!targets || !targets[0]) return message.channel.send(`No ingresaste ningún color para mostrar. Para más información usa \`${global.Config.prefix}help hex\``)
+        if (!targets || !targets[0]) return message.channel.send(`No ingresaste ningún color para mostrar. Para más información usa \`${Guilds.getPrefix(guild?.id || "")}help hex\``)
         if (targets[0] === 'alias' || targets[0] === 'aliases' || targets[0] === 'colors' || targets[0] === 'colorlist') return message.channel.send(Embed.notify('Color list', `\`${Object.keys(colorAliases).join(' - ')}\``))
 
         const targetsParsed: number[] = targets.map(target => parseInt(target))
