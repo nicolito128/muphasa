@@ -36,7 +36,7 @@ const colorAliases = {
     "lemongreen": "9AD91D",
     "lemonyellow": "D9D01D",
     "blue": "202BD3",
-    "cian": "25DEA9",
+    "cian": "25DECA",
     "skyblue": "76CEEC",
     "lightblue": "00D5EA",
     "purple": "641DD9",
