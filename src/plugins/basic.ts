@@ -2,15 +2,11 @@ import { Embed, CustomEmbed } from '../../lib/embed'
 import { toId } from '../../lib/text'
 import { Guilds } from '../../lib/guilds'
 
-type RegionType = "brazil" | "eu-central" | "singapore" | "us-central" | "sydney" | "us-east" | "us-south" | "us-west" | "eu-west" | "vip-us-east" | "london" | "amsterdam" | "hongkong" | "russia" | "southafrica"
-
-type ColorType = "red" | "orange" | "yellow" | "gold" | "green" | "lemonyellow" | "lemongreen" | "blue" | "cian" | "skyblue" | "lightblue" | "purple" | "violet" | "pink" | "lightpink" | "rose" | "crimson" | "black" | "white" | "gray" | "night" | "brown" | "lightbrown"
-
 type RGB = {r: number, g: number, b: number}
 
 const githubUrl: string = 'https://github.com/nicolito128/muphasa'
 
-const regions = {
+const regions: {[k: string]: string} = {
     "brazil": ":flag_br: Brazil",
     "eu-central": ":flag_eu: Central Europe",
     "singapore": ":flag_sg: Singapore",
@@ -28,7 +24,7 @@ const regions = {
     "southafrica": ":flag_za: South Africa"
 }
 
-const colorAliases = {
+const colorAliases: {[k: string]: string} = {
     "red": "C51818",
     "orange": "E7551B",
     "yellow": "E5D813",
@@ -89,7 +85,7 @@ export const commands: Types.ICommands = {
             const bots = guild.members.cache.filter(member => member.user.bot).size
             const roles = guild.roles.cache.size
             const members = guild.memberCount
-            const region: RegionType = guild.region as RegionType
+            const region = guild.region
             const verificationLevel = guild.verificationLevel
 
             const embedInfo = Embed.notify('', '')
@@ -247,7 +243,7 @@ export const commands: Types.ICommands = {
             hex = rgbToHex(targetsParsed[0], targetsParsed[1], targetsParsed[2])
             rgbInEmbed = `${targetsParsed[0]} ${targetsParsed[1]} ${targetsParsed[2]}`
         } else if (colorAliases.hasOwnProperty(toId(targets[0]))) {
-            hex = colorAliases[toId(targets[0]) as ColorType]
+            hex = colorAliases[toId(targets[0])]
         } else {
             hex = targets[0]
         }
