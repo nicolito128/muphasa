@@ -1,7 +1,7 @@
 import * as Discord from "discord.js"
 import * as Config from "./../config/config.js"
 import { Database } from './../lib/json-db'
-import { Plugins } from "./plugins"
+import { Messages } from "./plugins"
 
 export class CustomClient extends Discord.Client {
     activity: string;
@@ -43,9 +43,7 @@ export class CustomClient extends Discord.Client {
     }
 
     handleMessage() {
-        this.on('message', async (message: Discord.Message) => {
-            return await Plugins.evalMessage(message)
-        })
+        this.on('message', async (message: Discord.Message) => await Messages.eval(message))
     }
 
     ready(): void {

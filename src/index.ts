@@ -29,7 +29,7 @@ global.Plugins = Plugins
 
 // Load plugins
 try {
-    Plugins.loadPlugins()
+    Plugins.loader.loadPlugins()
 } catch (err) {
     if (err) throw err
 }

@@ -58,55 +58,13 @@ export class PluginCollection extends Map {
     }
 }
 
-export class PluginsHandler {
+export class PluginsLoader {
     commands: PluginCollection;
     helps: PluginCollection;
 
     constructor() {
         this.commands = new PluginCollection()
         this.helps = new PluginCollection()
-    }
-
-    evalMessage(message: Message): void {
-        let prefix: string = Config.prefix
-        if (message.member) prefix = Guilds.getPrefix(message.member.guild.id)
-
-        if (message.content.startsWith(prefix)) {
-            const params: ICommandParams = this.parseCommand(message, prefix)
-            let command: ICommandHandler | undefined
-
-            if (params.cmd) command = this.getCommand(params.cmd)
-            if (command) return command({...params})
-        }
-    }
-
-    getCommand(cmd: string): ICommandHandler | undefined {
-        return this.commands.get(cmd)
-    }
-
-    getHelp(help: string): IHelpData | undefined {
-        return this.helps.get(help)
-    }
-
-    getHelps(): IHelps {
-        return this.helps.getAll() as IHelps
-    }
-
-    getTopics(): string[] {
-        let topics: Set<string> = new Set()
-        this.helps.forEach((value: any) => {
-            topics.add(value.topic)
-        })
-        return [...topics]
-    }
-
-    parseCommand(message: Message, prefix: string): ICommandParams {
-        let user: Discord.User = message.author
-        let targets: string[] = message.content.slice(prefix.length).trim().split(' ')
-        let cmd: string | undefined = targets?.shift()?.toLowerCase()
-        let guild: Discord.Guild | null = (message.member) ? message.member.guild : null
-
-        return {message, user, targets, guild, cmd}
     }
 
     loadPlugins(): void {
@@ -180,4 +138,63 @@ export class PluginsHandler {
     }
 }
 
-export const Plugins: PluginsHandler = new PluginsHandler()
+export class MessagesHandler {
+    plugins: PluginsHandler;
+
+    constructor(plugins: PluginsHandler) {
+        this.plugins = plugins
+    }
+
+    eval(message: Message): any {
+        let prefix: string = Config.prefix
+        if (message.member) prefix = Guilds.getPrefix(message.member.guild.id)
+
+        if (message.content.startsWith(prefix)) {
+            const params: ICommandParams = this.parseToCommand(message, prefix)
+            let command: ICommandHandler | undefined
+
+            if (params.cmd) command = this.plugins.getCommand(params.cmd)
+            if (command) return command({...params})
+        }
+    }
+
+    parseToCommand(message: Message, prefix: string): ICommandParams {
+        let user: Discord.User = message.author
+        let targets: string[] = message.content.slice(prefix.length).trim().split(' ')
+        let cmd: string | undefined = targets?.shift()?.toLowerCase()
+        let guild: Discord.Guild | null = (message.member) ? message.member.guild : null
+
+        return {message, user, targets, guild, cmd}
+    }
+}
+
+export class PluginsHandler {
+    loader: PluginsLoader;
+
+    constructor(loader: PluginsLoader) {
+        this.loader = loader
+    }
+    
+    getCommand(cmd: string): ICommandHandler | undefined {
+        return this.loader.commands.get(cmd)
+    }
+
+    getHelp(help: string): IHelpData | undefined {
+        return this.loader.helps.get(help)
+    }
+
+    getHelps(): IHelps {
+        return this.loader.helps.getAll() as IHelps
+    }
+
+    getTopics(): string[] {
+        let topics: Set<string> = new Set()
+        this.loader.helps.forEach((value: any) => {
+            topics.add(value.topic)
+        })
+        return [...topics]
+    }
+}
+
+export const Plugins = new PluginsHandler(new PluginsLoader())
+export const Messages = new MessagesHandler(Plugins)
