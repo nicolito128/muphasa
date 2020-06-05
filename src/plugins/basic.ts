@@ -4,6 +4,8 @@ import { Guilds } from '../../lib/guilds'
 
 type RegionType = "brazil" | "eu-central" | "singapore" | "us-central" | "sydney" | "us-east" | "us-south" | "us-west" | "eu-west" | "vip-us-east" | "london" | "amsterdam" | "hongkong" | "russia" | "southafrica"
 
+type ColorType = "red" | "orange" | "yellow" | "gold" | "green" | "lemon" | "blue" | "cian" | "skyblue" | "lightblue" | "purple" | "violet" | "pink" | "lightpink" | "rose" | "crimson" | "black" | "white" | "gray" | "night" | "brown" | "lightbrown"
+
 type RGB = {r: number, g: number, b: number}
 
 const githubUrl: string = 'https://github.com/nicolito128/type-muphasa'
@@ -23,7 +25,33 @@ const regions = {
     "hongkong": ":flag_hk: Hong Kong",
     "russia": ":flag_ru: Russia",
     "southafrica": ":flag_za: South Africa"
-};
+}
+
+const colorAliases = {
+    "red": "C51818",
+    "orange": "E7551B",
+    "yellow": "E5D813",
+    "gold": "ECA800",
+    "green": "30D320",
+    "lemongreen": "9AD91D",
+    "lemonyellow": "D9D01D",
+    "blue": "202BD3",
+    "cian": "25DEA9",
+    "skyblue": "76CEEC",
+    "lightblue": "00D5EA",
+    "purple": "641DD9",
+    "violet": "A01DD9",
+    "pink": "D320BD",
+    "lightpink": "F9A0FB",
+    "rose": "F9A0FB",
+    "crimson": "D91D4D",
+    "black": "000000",
+    "night": "202020",
+    "white": "FFFFFF",
+    "gray": "B1B1B1",
+    "brown": "441F10",
+    "lightbrown": "8F4527"
+}
 
 const getHexValue = (n: number): string => Number(n).toString(16)
 const rgbToHex = (r: number, g: number, b: number): string => {
@@ -199,10 +227,13 @@ export const commands: Types.ICommands = {
     },
 
     hex({message, targets}) {
-        let hex: string, rgb: RGB | null, rgbInEmbed: string = ''
-        let image: string = 'https://dummyimage.com/1000x1000/'
+        let hex: string = '',
+            rgb: RGB | null = null,
+            rgbInEmbed: string = '',
+            image: string = 'https://dummyimage.com/1000x1000/';
 
         if (!targets || !targets[0]) return message.channel.send(`No ingresaste ningún color para mostrar. Para más información usa \`${global.Config.prefix}help hex\``)
+        if (targets[0] === 'alias' || targets[0] === 'aliases' || targets[0] === 'colors' || targets[0] === 'colorlist') return message.channel.send(Embed.notify('Color list', `\`${Object.keys(colorAliases).join(' - ')}\``))
 
         const targetsParsed: number[] = targets.map(target => parseInt(target))
         if (targetsParsed.length > 1) {
@@ -213,6 +244,8 @@ export const commands: Types.ICommands = {
 
             hex = rgbToHex(targetsParsed[0], targetsParsed[1], targetsParsed[2])
             rgbInEmbed = `${targetsParsed[0]} ${targetsParsed[1]} ${targetsParsed[2]}`
+        } else if (colorAliases.hasOwnProperty(toId(targets[0]))) {
+            hex = colorAliases[toId(targets[0]) as ColorType]
         } else {
             hex = targets[0]
         }
@@ -225,7 +258,9 @@ export const commands: Types.ICommands = {
             Embed.notify(
                 '',
                 [`\`HEX: #${hex}\``, `\`RGB: ${rgbInEmbed}\``],
-                'transparent').setImage(image)
+                '')
+                .setImage(image)
+                .setColor(`#${hex}`)
         )
     },
 
@@ -297,8 +332,8 @@ export const help: Types.IHelps = {
 
     hex: {
         topic: "basic",
-        usage: 'hex | red blue green',
-        info: 'Muestra una imagen completamente del color hex/rgb ingresado.'
+        usage: 'hex | colors | red blue green',
+        info: 'Muestra una imagen completamente del color hex/rgb ingresado. También puedes consulta una lista de colores por defecto ingresando como parametro la palabra "colors".'
     },
 
     avatar: {
