@@ -70,6 +70,37 @@ function hexToRgb(hex: string): RGB | null {
 }
 
 export const commands: Types.ICommands = {
+    eval({message, user, targets}) {
+        if (!global.Config.owners.includes(user.id)) return message.channel.send( Embed.denied() )
+
+        const code: string = targets.join(' ')
+        if (!code) return message.channel.send('Ingresa código que poder evaluar.')
+
+        try {
+            message.channel.send(eval(code), {code: 'javascript'})
+            console.log('\nEVAL OUTPUT:\n' + eval(code))
+        } catch(err) {
+            message.channel.send(`ERROR!\n${err}`, {code: 'javascript'})
+        }
+    },
+
+    invitation: 'invite',
+    invite({message}) {
+        const embed = Embed.notify('¡Invitame a tu servidor!', '')
+        .setDescription([
+            '¡Hola! soy **' + global.Client.user?.username + '**, un bot multi propocitos con diversas herramienta para mejorar tu servidor.',
+            ' ',
+            `:ok_hand: **[Invitación con permisos](https://discord.com/oauth2/authorize?client_id=551826544453222418&scope=bot&permissions=8)**`,
+            `:pinching_hand: [Invitación sin permisos](https://discord.com/oauth2/authorize?client_id=551826544453222418&scope=bot&permissions=0)`
+        ])
+        .setColor('#4169E1')
+        .setThumbnail(global.Client.user?.avatarURL() || "")
+        .addField('Funciono en', `${global.Client.guilds.cache.size} servidores`, true)
+        .addField('Ayudo a', `${global.Client.users.cache.size} usuarios`, true)
+
+        message.channel.send(embed)
+    },
+
     serverinfo: 'server',
     server({message, guild}) {
         if (guild) {
@@ -137,6 +168,7 @@ export const commands: Types.ICommands = {
         if (guild) id = guild.id
 
         const embed = Embed.notify(target, [
+            `**Topic**: ${help.topic}`,
             `**Usage**: \`${Guilds.getPrefix(id)}${target}${(help.usage) ? ' < ' + help.usage + ' > ' : ''}\``,
             `**Info**: ${help.info}`
         ])
@@ -151,28 +183,30 @@ export const commands: Types.ICommands = {
         const prefix = Guilds.getPrefix(guild?.id || "")
         const embedTopicInvalid: CustomEmbed = Embed.notify(
             'Listas de comandos',
-            [
-                `Consulta las listas usando **${prefix}topic** *topic*`,
-                topicList.map(t => `\`${t}\``).join('\n')
-            ]
+            `Consulta las listas usando **${prefix}topic** *topic*`
         );
+        topicList.forEach(topic => {
+            embedTopicInvalid.addField(topic, 'ㅤ', true)
+        })
+
+
         let topic: string = toId(targets.join())
         if (!topic) return message.channel.send(embedTopicInvalid)
         if (!topicList.includes(topic)) return message.channel.send(embedTopicInvalid)
 
-        let topicData = Object.keys(helps)
-            .map((key: string) => {
-                if (helps[key].topic == topic) {
-                    return '`' + prefix + key + '`'
-                }
-            });
+        let topicData: string[] = []
+        Object.keys(helps).forEach(key => {
+            if (helps[key] && helps[key]?.topic === topic) {
+                topicData.push('`' + prefix + key + '`')
+            }
+        })
 
         message.channel.send(
             Embed.notify(
                 `Topic: ${topic}`,
                 [
                     `Consulta más información sobre un comando usando **${prefix}help** *command*`,
-                    (topicData as string[]).join('\n')
+                    ...topicData as string[]
                 ]
             )
         )
@@ -184,6 +218,14 @@ export const commands: Types.ICommands = {
         return message.channel.send(msg)   
     },
 
+    shadowsay: 'esay',
+    esay({message, targets}) {
+        let msg: string = targets.join(' ').trim()
+        if (!msg) return message.channel.send('Debes ingresar un texto para que repita.')
+        message.channel.send(msg)
+        message.delete()
+    },
+
     github({message, user}) {
         message.channel.send(
             Embed.notify(
@@ -192,20 +234,6 @@ export const commands: Types.ICommands = {
                 [68, 197, 76] // rgb
                 ).setURL(githubUrl)
         )
-    },
-
-    eval({message, user, targets}) {
-        if (!global.Config.owners.includes(user.id)) return message.channel.send( Embed.denied() )
-
-        const code: string = targets.join(' ')
-        if (!code) return message.channel.send('Ingresa código que poder evaluar.')
-
-        try {
-            message.channel.send(eval(code), {code: 'javascript'})
-            console.log('\nEVAL OUTPUT:\n' + eval(code))
-        } catch(err) {
-            message.channel.send(`ERROR!\n${err}`, {code: 'javascript'})
-        }
     },
 
     pick({message, targets}) {
