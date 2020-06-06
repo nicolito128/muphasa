@@ -47,5 +47,11 @@ export const help: Types.IHelps = {
         topic: 'settings',
         usage: 'en | es',
         info: 'Define el idioma que usará el bot para sus comandos'
+    },
+
+    prefix: {
+        topic: 'settings',
+        usage: 'prefix',
+        info: 'Modifica el prefijo que usará en los comandos de este servidor.'
     }
 }
