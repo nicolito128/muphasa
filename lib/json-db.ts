@@ -7,10 +7,8 @@
 import * as fs from "fs"
 
 export interface IData {
-    [k: string]: SpectedType;
+    [k: string]: any;
 }
-
-export type SpectedType = IData | IData[] | string | number | boolean
 
 const root: string = __dirname + `/../db/`
 
@@ -85,15 +83,15 @@ export class Database {
      * @example put('names', ['Carl', 'Jimmy'], true)
      * @example put('age', 1)
      */
-    put(key: string, value: SpectedType, concatArrays?: boolean): Database | null {
+    put(key: string, value: any, concatArrays?: boolean): Database | null {
         const keyType: string = strictType(this.data[key])
 
         switch(keyType) {
             case 'array':
                 if (concatArrays && value instanceof Array) {
-                    (this.data[key] as SpectedType[]) = (this.data[key] as SpectedType[]).concat(value)
+                    (this.data[key] as any[]) = (this.data[key] as any[]).concat(value)
                 } else {
-                    (this.data[key] as SpectedType[]).push(value)
+                    (this.data[key] as any[]).push(value)
                 }
                 
                 break;
@@ -141,7 +139,7 @@ export class Database {
     /**
      * @todo Get a key value
      */
-    get(key: string): SpectedType | void {
+    get(key: string): any {
         if (this.has(key)) return this.data[key]
         return undefined as void
     }
@@ -157,7 +155,7 @@ export class Database {
         return Object.keys(this.data)
     }
 
-    values(): SpectedType[] {
+    values(): any[] {
         return Object.values(this.data)
     }
 
