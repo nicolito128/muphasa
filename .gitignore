@@ -5,5 +5,9 @@ package-lock.json
 # Typescript build artifacts
 .*-dist/
 
+# Plugins in progress
+src/plugins/*-private.ts
+src/plugins/*-private.js
+
 # visual studio
 .vscode
