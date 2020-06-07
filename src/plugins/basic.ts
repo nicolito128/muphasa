@@ -240,7 +240,7 @@ export const commands: Types.ICommands = {
         targets = targets.join(' ').split(',')
         if (targets.length <= 1) return message.channel.send('Intenta ingresar más elementos para seleccionar.')
         const len: number = targets.length
-        const randomArgument: string = targets[Math.round(Math.random() * len)]
+        const randomArgument: string = targets[Math.floor(Math.random() * len)]
         message.channel.send(
             Embed.notify('Random pick', `\`${randomArgument}\``)
         )
@@ -251,7 +251,7 @@ export const commands: Types.ICommands = {
         if (isNaN(num)) return message.channel.send('Este comando sólo admite un número como parametro.')
         if (num >= (100000 * 10000000)) return message.channel.send('No voy a calcular eso, lol')
 
-        const randomNumber: number = Math.round(Math.random() * (num + 1))
+        const randomNumber: number = Math.floor(Math.random() * (num + 1))
         message.channel.send(
             Embed.notify('Random number', `\`${randomNumber}\``)
         )
