@@ -47,6 +47,8 @@ export class Database {
         this.path = root + this.file
         this.data = {}
 
+        if (!fs.existsSync('db/')) fs.mkdirSync('db')
+
         createDb(jsonName)
         this.loadData()
     }

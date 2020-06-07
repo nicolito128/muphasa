@@ -46,6 +46,10 @@ export class CustomClient extends Discord.Client {
         this.on('message', async (message: Discord.Message) => await Messages.eval(message))
     }
 
+    handleGuildJoin() {
+        this.on('guildCreate', () => this.initGuildsDB())
+    }
+
     ready(): void {
         this.on('ready', () => {
             (this.user as Discord.ClientUser).setActivity(this.activity, { type: 'WATCHING' })
