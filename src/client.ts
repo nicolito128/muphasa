@@ -46,7 +46,7 @@ export class CustomClient extends Discord.Client {
         this.on('message', async (message: Discord.Message) => await Messages.eval(message))
     }
 
-    handleGuildJoin() {
+    handleGuildCreate() {
         this.on('guildCreate', () => this.initGuildsDB())
     }
 
@@ -58,6 +58,7 @@ export class CustomClient extends Discord.Client {
             this.handleDebug()
             this.handleError()
             this.handleMessage()
+            this.handleGuildCreate()
 
             // Create the guilds settings
             this.initGuildsDB()
