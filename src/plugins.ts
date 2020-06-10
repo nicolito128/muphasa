@@ -59,12 +59,20 @@ export class PluginCollection extends Map {
 }
 
 export class PluginsLoader {
-    commands: PluginCollection;
-    helps: PluginCollection;
+    private commands: PluginCollection;
+    private helps: PluginCollection;
 
     constructor() {
         this.commands = new PluginCollection()
         this.helps = new PluginCollection()
+    }
+
+    getCommands() {
+        return this.commands
+    }
+
+    getHelps() {
+        return this.helps
     }
 
     loadPlugins(): void {
@@ -131,7 +139,7 @@ export class PluginsLoader {
 }
 
 export class MessagesHandler {
-    plugins: PluginsHandler;
+    private plugins: PluginsHandler;
 
     constructor(plugins: PluginsHandler) {
         this.plugins = plugins
@@ -170,20 +178,20 @@ export class PluginsHandler {
     }
     
     getCommand(cmd: string): ICommandHandler | undefined {
-        return this.loader.commands.get(cmd)
+        return this.loader.getCommands().get(cmd)
     }
 
     getHelp(help: string): IHelpData | undefined {
-        return this.loader.helps.get(help)
+        return this.loader.getHelps()?.get(help)
     }
 
     getHelps(): IHelps {
-        return this.loader.helps.getAll() as IHelps
+        return this.loader.getHelps().getAll() as IHelps
     }
 
     getTopics(): string[] {
         let topics: Set<string> = new Set()
-        this.loader.helps.forEach((value: any) => {
+        this.loader.getHelps().forEach((value: any) => {
             topics.add(value.topic)
         })
         return [...topics]
