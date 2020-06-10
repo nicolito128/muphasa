@@ -18,7 +18,7 @@ function createMuteRole(guild: Discord.Guild) {
 
 function muteMember(guild: Discord.Guild, member: Discord.GuildMember, channel?: Discord.GuildChannel): boolean {
     createMuteRole(guild)
-    
+
     if (channel) {
         const permission = channel.permissionOverwrites.find(permission => permission.id === member.id)
         if (permission) return false
@@ -113,7 +113,7 @@ export const help: Types.IHelps = {
     unmute: {
         topic: 'moderation',
         usage: 'mention',
-        info: 'Si el miembro mencionado se encuentra silenciado: devuelvele el permiso de escribir en todos (el comando remueve el rol "muphasa-mute").'
+        info: 'Si el miembro mencionado se encuentra silenciado: devuelvele el permiso de escribir.'
     },
 
     mutehere: {
@@ -121,10 +121,4 @@ export const help: Types.IHelps = {
         usage: 'mention',
         info: 'Remueve el permiso de escribir del miembro mencionado en el canal actual.'
     },
-
-    unmutehere: {
-        topic: 'moderation',
-        usage: 'mention',
-        info: 'Si el miembro mencionado se encuentra silenciado: devuelvele el permiso de escribir en este canal.'
-    }
 }
