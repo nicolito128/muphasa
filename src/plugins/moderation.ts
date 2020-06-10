@@ -16,45 +16,42 @@ function createMuteRole(guild: Discord.Guild) {
     }
 }
 
-function muteMember(guild: Discord.Guild, member: Discord.GuildMember): boolean {
-    const role = member.roles.cache.find(role => role.name === 'muphasa-mute')
-    const guildRole = guild.roles.cache.find(role => role.name === 'muphasa-mute') as Discord.Role
-    if (role) return false
-    if (guildRole) member.roles.add(guildRole)
+function muteMember(guild: Discord.Guild, member: Discord.GuildMember, channel?: Discord.GuildChannel): boolean {
+    createMuteRole(guild)
+    
+    if (channel) {
+        const permission = channel.permissionOverwrites.find(permission => permission.id === member.id)
+        if (permission) return false
 
-    guild.channels.cache.forEach((channel) => {
-        if (!channel.permissionOverwrites.find(permission => permission.id === guildRole.id)) {
-            channel.createOverwrite(guildRole, {
-                'SEND_MESSAGES': false,
-            })
-        }
-    })
+        channel.createOverwrite(member, {
+            'SEND_MESSAGES': false,
+        })
+    } else {
+        const role = member.roles.cache.find(role => role.name === 'muphasa-mute')
+        const guildRole = guild.roles.cache.find(role => role.name === 'muphasa-mute') as Discord.Role
+        if (role) return false
+        if (guildRole) member.roles.add(guildRole)
 
+        guild.channels.cache.forEach((channel) => {
+            if (!channel.permissionOverwrites.find(permission => permission.id === guildRole.id)) {
+                channel.createOverwrite(guildRole, {
+                    'SEND_MESSAGES': false,
+                })
+            }
+        })
+    }
+    
     return true
 }
 
-function unmuteMember(guild: Discord.Guild, member: Discord.GuildMember): boolean {
+function unmuteMember(member: Discord.GuildMember, channel: Discord.GuildChannel): boolean {
     const role = member.roles.cache.find(role => role.name === 'muphasa-mute') as Discord.Role
-    if (!role) return false
-    member.roles.remove(role)
-    return true
-}
-
-function muteMemberInChannel(member: Discord.GuildMember, channel: Discord.GuildChannel): boolean {
     const permission = channel.permissionOverwrites.find(permission => permission.id === member.id)
-    if (permission) return false
+    
+    if (!role && !permission) return false
+    if (role) member.roles.remove(role)
+    if (permission) permission.delete()
 
-    channel.createOverwrite(member, {
-        'SEND_MESSAGES': false,
-    })
-    return true
-}
-
-function unmuteMemberInChannel(member: Discord.GuildMember, channel: Discord.GuildChannel): boolean {
-    const permission = channel.permissionOverwrites.find(permission => permission.id === member.id)
-    if (!permission) return false
-
-    permission.delete()
     return true
 }
 
@@ -66,17 +63,13 @@ export const commands: Types.ICommands = {
         if (message.mentions.members.first() == message.member) return message.channel.send('No puedes silenciarte a ti mismo :no_entry_sign:')
         if (message.mentions.members?.first()?.id == global.Client.user?.id) return message.channel.send('No me silenciaré a mi mismo.')
 
-        createMuteRole(guild)
-
         const targetMember = message.mentions.members.first() as Discord.GuildMember
         if (targetMember && targetMember.hasPermission('MANAGE_ROLES')) return message.channel.send('¡No voy a silenciar a un compañero moderador! :pouting_cat:')
 
         const muteResult: boolean = muteMember(guild, targetMember)
-        if (muteResult) {
-            return message.channel.send(`¡La justicia prevalecerá! Silenciaste a ${targetMember?.user} en todos los canales posibles`)
-        }
-
-        return message.channel.send(`El miembro ya estaba silenciado o no pudo ser silenciado por otra razón.`)
+        if (!muteResult) return message.channel.send(`El miembro ya estaba silenciado o no pudo ser silenciado por otra razón.`)
+        
+        message.channel.send(`¡La justicia prevalecerá! Silenciaste a ${targetMember?.user} en todos los canales posibles`)  
     },
 
     unmute({message, guild}) {
@@ -87,12 +80,10 @@ export const commands: Types.ICommands = {
         createMuteRole(guild)
 
         const targetMember = message.mentions.members.first() as Discord.GuildMember
-        const unmuteResult: boolean = unmuteMember(guild, targetMember)
-        if (unmuteResult) {
-            return message.channel.send(`${targetMember.user} ya no estará silenciado :monkey_face:`)
-        }
-
-        return message.channel.send(`El miembro no estaba silenciado :speak_no_evil:`)
+        const unmuteResult: boolean = unmuteMember(targetMember, message.channel as Discord.GuildChannel)
+        if (!unmuteResult) return message.channel.send(`El miembro no estaba silenciado :speak_no_evil:`)
+        
+        message.channel.send(`${targetMember.user} ya no estará silenciado :monkey_face:`)
     },
 
     mutehere({message, guild}) {
@@ -105,30 +96,10 @@ export const commands: Types.ICommands = {
         const targetMember = message.mentions.members.first() as Discord.GuildMember
         if (targetMember && targetMember.hasPermission('MANAGE_ROLES')) return message.channel.send('¡No voy a silenciar a un compañero moderador! :pouting_cat:')
 
-        const muteResult: boolean = muteMemberInChannel(targetMember, message.channel as Discord.GuildChannel)
-        if (muteResult) {
-            return message.channel.send(`¡La justicia prevalecerá! Silenciaste a ${targetMember?.user} **en este canal**`)
-        }
+        const muteResult: boolean = muteMember(guild, targetMember, message.channel as Discord.GuildChannel)
+        if (!muteResult) return message.channel.send(`El miembro ya estaba silenciado o no pudo ser silenciado por otra razón.`)
 
-        return message.channel.send(`El miembro ya estaba silenciado o no pudo ser silenciado por otra razón.`)
-    },
-
-    unmutehere({message, guild}) {
-        if (!guild) return message.channel.send('Este comando sólo puede ser utilizado en un servidor.')
-        if (message.member && !message.member.hasPermission('MANAGE_ROLES')) return message.channel.send(Embed.denied('MANAGE_ROLES'))
-        if (!message.mentions.members?.first()) return message.channel.send('Necesito que menciones a un usuario :person_frowning:')
-
-        createMuteRole(guild)
-
-        const targetMember = message.mentions.members.first() as Discord.GuildMember
-        if (targetMember && targetMember.hasPermission('MANAGE_ROLES')) return message.channel.send('¡No voy a silenciar a un compañero moderador! :pouting_cat:')
-
-        const unmuteResult: boolean = unmuteMemberInChannel(targetMember, message.channel as Discord.GuildChannel)
-        if (unmuteResult) {
-            return message.channel.send(`${targetMember.user} ya no estará silenciado en este canal :monkey_face:`)
-        }
-
-        return message.channel.send(`El miembro no estaba silenciado :speak_no_evil:`)
+        return message.channel.send(`¡La justicia prevalecerá! Silenciaste a ${targetMember?.user} **en este canal**`)
     }
 }
 
