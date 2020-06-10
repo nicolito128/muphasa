@@ -141,7 +141,9 @@ export class MessagesHandler {
         let prefix: string = Config.prefix
         if (message.member) prefix = Guilds.getPrefix(message.member.guild.id)
 
-        if (message.content.startsWith(prefix)) {
+        if (message.content.toLowerCase().startsWith(prefix) || message.content.startsWith(prefix)) {
+            if (message.author.bot) return null
+
             const params: ICommandParams = this.parseToCommand(message, prefix)
             let command: ICommandHandler | undefined
 
