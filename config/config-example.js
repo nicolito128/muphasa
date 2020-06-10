@@ -8,12 +8,12 @@
 
 // Token is required to connect to client
 /** @type {string} */
-exports.token = ""
+exports.token = process.env.TOKEN || ""
 
 // Prefix is ​​the character that the bot uses to identify commands
 /** @type {string} */
-exports.prefix = ""
+exports.prefix = process.env.PREFIX || ""
 
 // List of owners id
-/** @type {string[]} */
-exports.owners = []
+/** @type {(string | undefined)[]} */
+exports.owners = [process.env.OWNERS] || []
