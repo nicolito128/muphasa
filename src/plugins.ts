@@ -1,7 +1,6 @@
 import * as fs from 'fs'
 import * as Discord from 'discord.js'
 import * as Config from './../config/config.js'
-import { Guilds } from '../lib/guilds'
 
 export interface IPluginStruct {
     [p: string]: CollectionReturnType
@@ -117,13 +116,11 @@ export class PluginsLoader {
     }
 
     filterPlugin(plugin: IPluginStruct): IPluginStruct {
-        let commandAlias: string
-
         if (plugin.commands) {
-            Object.keys(plugin.commands).forEach((key: string) => {
+            Object.keys(plugin.commands).forEach((key) => {
                 switch (typeof plugin.commands[key]) {
                     case 'string':
-                        commandAlias = plugin.commands[key] as string
+                        let commandAlias = plugin.commands[key] as string
                         if (plugin.commands.hasOwnProperty(commandAlias)) plugin.commands[key] = plugin.commands[commandAlias];
                         break;
                     case 'function':
@@ -147,7 +144,6 @@ export class MessagesHandler {
 
     eval(message: Message): any {
         let prefix: string = Config.prefix
-        if (message.member) prefix = Guilds.getPrefix(message.member.guild.id)
 
         if (message.content.toLowerCase().startsWith(prefix) || message.content.startsWith(prefix)) {
             if (message.author.bot) return null

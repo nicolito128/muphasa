@@ -1,6 +1,5 @@
 import { Embed, CustomEmbed } from '../../lib/embed'
 import { toId } from '../../lib/text'
-import { Guilds } from '../../lib/guilds'
 
 type RGB = {r: number, g: number, b: number}
 
@@ -169,7 +168,7 @@ export const commands: Types.ICommands = {
 
         const embed = Embed.notify(target, [
             `**Topic**: ${help.topic}`,
-            `**Usage**: \`${Guilds.getPrefix(id)}${target}${(help.usage) ? ' < ' + help.usage + ' > ' : ''}\``,
+            `**Usage**: \`${global.Config.prefix}${target}${(help.usage) ? ' < ' + help.usage + ' > ' : ''}\``,
             `**Info**: ${help.info}`
         ])
 
@@ -180,7 +179,7 @@ export const commands: Types.ICommands = {
     topic({message, targets, guild}) {
         const helps: Types.IHelps = global.Plugins.getHelps()
         const topicList: string[] = global.Plugins.getTopics()
-        const prefix = Guilds.getPrefix(guild?.id || "")
+        const prefix: string = global.Config.prefix
         const embedTopicInvalid: CustomEmbed = Embed.notify(
             'Listas de comandos',
             `Consulta las listas usando **${prefix}topic** *topic*`
@@ -263,7 +262,7 @@ export const commands: Types.ICommands = {
             rgbInEmbed: string = '',
             image: string = 'https://dummyimage.com/1000x1000/';
 
-        if (!targets || !targets[0]) return message.channel.send(`No ingresaste ningún color para mostrar. Para más información usa \`${Guilds.getPrefix(guild?.id || "")}help hex\``)
+        if (!targets || !targets[0]) return message.channel.send(`No ingresaste ningún color para mostrar. Para más información usa \`${global.Config.prefix}help hex\``)
         if (targets[0] === 'alias' || targets[0] === 'aliases' || targets[0] === 'colors' || targets[0] === 'colorlist') return message.channel.send(Embed.notify('Color list', `\`${Object.keys(colorAliases).join(' - ')}\``))
 
         const targetsParsed: number[] = targets.map(target => parseInt(target))
