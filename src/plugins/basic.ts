@@ -49,24 +49,18 @@ const colorAliases: {[k: string]: string} = {
     "lightbrown": "8F4527"
 }
 
-const getHexValue = (n: number): string => Number(n).toString(16)
+const getHexValue = (n: number): string => Number(n).toString(16);
 
-function rgbToHex (r: number, g: number, b: number): string {
-    const red: string = getHexValue(r)
-    const green: string = getHexValue(g)
-    const blue: string = getHexValue(b)
+const rgbToHex = (r: number, g: number, b: number): string => getHexValue(r) + getHexValue(g) + getHexValue(b);
 
-    return red + green + blue
-}
-
-function hexToRgb(hex: string): RGB | null {
-    let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
+const hexToRgb = (hex: string): RGB => {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex) || ['0', '0', '0'];
+    return {
       r: parseInt(result[1], 16),
       g: parseInt(result[2], 16),
       b: parseInt(result[3], 16)
-    } : null;
-}
+    };
+};
 
 export const commands: Types.ICommands = {
     eval({message, user, targets}) {
@@ -257,72 +251,72 @@ export const commands: Types.ICommands = {
     },
 
     hex({message, targets, guild}) {
-        let hex: string = '',
-            rgb: RGB | null = null,
-            rgbInEmbed: string = '',
-            image: string = 'https://dummyimage.com/1000x1000/';
+        let hex: string = '';
+        let rgb: RGB = Object.create(null);
+        let rgbInEmbed: string = '';
+        let image: string = 'https://dummyimage.com/1000x1000/';
 
-        if (!targets || !targets[0]) return message.channel.send(`No ingresaste ningún color para mostrar. Para más información usa \`${global.Config.prefix}help hex\``)
-        if (targets[0] === 'alias' || targets[0] === 'aliases' || targets[0] === 'colors' || targets[0] === 'colorlist') return message.channel.send(Embed.notify('Color list', `\`${Object.keys(colorAliases).join(' - ')}\``))
-
-        const targetsParsed: number[] = targets.map(target => parseInt(target))
-        if (targetsParsed.length > 1) {
-            if (targetsParsed.length < 3) return message.channel.send(`Si ingresas un valor RGB debes pasar 3 parametros.`)
-            targetsParsed.forEach(target => {
-                if (isNaN(target)) return message.channel.send('Si ingresas valores RGB todos los parametros deben ser números.')
-            })
-
-            hex = rgbToHex(targetsParsed[0], targetsParsed[1], targetsParsed[2])
-            rgbInEmbed = `${targetsParsed[0]} ${targetsParsed[1]} ${targetsParsed[2]}`
-        } else if (colorAliases.hasOwnProperty(toId(targets[0]))) {
-            hex = colorAliases[toId(targets[0])]
-        } else {
-            hex = targets[0]
+        if (!targets.length || !targets[0]) {
+            message.channel.send(`No ingresaste ningún color para mostrar.`);
+            return;
         }
 
-        image += `${hex}/${hex}`
-        rgb = hexToRgb(hex.toString())
-        if (!rgbInEmbed) rgbInEmbed = rgb ? (rgb as RGB).r.toString() + ' ' + (rgb as RGB).g.toString() + ' ' + (rgb as RGB).b.toString() : 'NaN'
+        if (targets[0].includes('alias') || targets[0].includes('colors') || targets[0].includes('colorlist')) {
+            const embed = Embed.notify('Color List', `\`${Object.keys(colorAliases).join(' - ')}\``);
+            message.channel.send(embed);
+            return;
+        }
 
-        message.channel.send(
-            Embed.notify(
-                '',
-                [`\`HEX: #${hex}\``, `\`RGB: ${rgbInEmbed}\``],
-                '')
-                .setImage(image)
-                .setColor(`#${hex}`)
+        const targetsParsed: number[] = targets.map(target => parseInt(target))
+
+        if (targetsParsed.length > 1 && targetsParsed.length < 3) {
+            message.channel.send(`Si ingresas un valor RGB debes pasar 3 parametros.`);
+            return;
+        } else if (targetsParsed.length == 3) {
+            targetsParsed.forEach(target => {
+                if (isNaN(target))
+                {
+                    message.channel.send('Si ingresas valores RGB todos los parametros deben ser números.');
+                    return;
+                }
+            })
+
+            hex = rgbToHex(targetsParsed[0], targetsParsed[1], targetsParsed[2]);
+            rgbInEmbed = `${targetsParsed[0]} ${targetsParsed[1]} ${targetsParsed[2]}`;
+        } else if (colorAliases.hasOwnProperty(toId(args[0]))) {
+            hex = colorAliases[args[0]];
+        } else {
+            hex = args[0].startsWith('#') ? args[0].substring(1) : args[0];
+        }
+
+        image += `${hex}/${hex}`;
+        rgb = hexToRgb(hex.toString());
+        if (!rgbInEmbed) rgbInEmbed = rgb ? rgb.r.toString() + ' ' + rgb.g.toString() + ' ' + rgb.b.toString() : 'NaN'
+
+        const embed = Embed.notify('',
+            [
+                `\`HEX: #${hex}\``,
+                `\`RGB: ${rgbInEmbed}\``
+            ]
         )
+        .setImage(image)
+        .setColor(`#${hex}`);
+
+        message.channel.send(embed);
     },
 
     avatar({message, user, targets}) {
-        let targetUser;
-        if (targets.length < 1) {
-            targetUser = user
-        } else {
-            targetUser = message.mentions.users.first()
-        }
+        const targetUser = message.mentions.users.first() || user;
+        const avatar = targetUser.displayAvatarURL({dynamic: true, size: 1024, format: 'png' || 'gif'});
+        const embed = Embed.notify('', 
+            [
+                `[Avatar link](${avatar})`,
+                `[Buscar en Google](https://www.google.com/searchbyimage?image_url=${avatar})`
+            ])
+            .setImage(avatar)
+            .setAuthor(`${targetUser.tag}'s avatar`, avatar);
 
-        if (typeof targetUser !== 'object') return message.channel.send('No especificaste un usuario valido.')
-
-        let avatar = targetUser.displayAvatarURL()
-
-        if (targetUser.avatar?.startsWith('a_')) {
-            avatar = avatar.replace('.webp', '.gif')
-        } else {
-            avatar = avatar.replace('.webp', '.png')
-        }
-
-        message.channel.send(
-            Embed.notify(
-                '',
-                [
-                    `[Avatar link](${avatar})`,
-                    `[Buscar en Google](https://www.google.com/searchbyimage?image_url=${avatar})`
-                ]
-                )
-                .setImage(avatar + '?size=1024')
-                .setAuthor(`${targetUser.username}#${targetUser.discriminator}'s avatar`, avatar)
-        )
+        message.channel.send(embed)
     },
 }
 
