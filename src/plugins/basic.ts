@@ -283,10 +283,10 @@ export const commands: Types.ICommands = {
 
             hex = rgbToHex(targetsParsed[0], targetsParsed[1], targetsParsed[2]);
             rgbInEmbed = `${targetsParsed[0]} ${targetsParsed[1]} ${targetsParsed[2]}`;
-        } else if (colorAliases.hasOwnProperty(toId(args[0]))) {
-            hex = colorAliases[args[0]];
+        } else if (colorAliases.hasOwnProperty(toId(targets[0]))) {
+            hex = colorAliases[targets[0]];
         } else {
-            hex = args[0].startsWith('#') ? args[0].substring(1) : args[0];
+            hex = targets[0].startsWith('#') ? targets[0].substring(1) : targets[0];
         }
 
         image += `${hex}/${hex}`;
@@ -305,7 +305,7 @@ export const commands: Types.ICommands = {
         message.channel.send(embed);
     },
 
-    avatar({message, user, targets}) {
+    avatar({message, user}) {
         const targetUser = message.mentions.users.first() || user;
         const avatar = targetUser.displayAvatarURL({dynamic: true, size: 1024, format: 'png' || 'gif'});
         const embed = Embed.notify('', 
