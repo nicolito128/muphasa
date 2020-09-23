@@ -1,13 +1,11 @@
 /node_modules
-/config/config.js
 package-lock.json
-/db
-# Typescript build artifacts
-.*-dist/
 
-# Plugins in progress
-src/plugins/*-private.ts
-src/plugins/*-private.js
+# Typescript build
+.*-dist/
 
 # visual studio
 .vscode
+
+# ENV
+.env
