@@ -18,7 +18,8 @@ try {
  **********************/
 declare const global: any
 
-import { Client } from "./client"
+import { CustomClient } from "./client"
+const Client = new CustomClient()
 global.Client = Client
 
 import { Plugins } from "./plugins"
