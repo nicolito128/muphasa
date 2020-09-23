@@ -4,7 +4,6 @@ import * as Plugins from "./plugins"
 declare global {
     namespace NodeJS {
         interface Global {
-            Config: {[k: string]: any};
             Client: CustomClient;
             Plugins: Plugins.PluginsHandler;
         }
@@ -17,4 +16,3 @@ declare global {
         type Message = Plugins.Message
     }
 }
-

@@ -1,3 +1,4 @@
+import Config from './../Config'
 import { Embed, CustomEmbed } from '../../lib/embed'
 import { toId } from '../../lib/text'
 
@@ -64,7 +65,7 @@ const hexToRgb = (hex: string): RGB => {
 
 export const commands: Types.ICommands = {
     eval({message, user, targets}) {
-        if (!global.Config.owners.includes(user.id)) return message.channel.send( Embed.denied() )
+        if (Config.owner !== user.id) return message.channel.send( Embed.denied() )
 
         const code: string = targets.join(' ')
         if (!code) return message.channel.send('Ingresa código que poder evaluar.')
@@ -162,7 +163,7 @@ export const commands: Types.ICommands = {
 
         const embed = Embed.notify(target, [
             `**Topic**: ${help.topic}`,
-            `**Usage**: \`${global.Config.prefix}${target}${(help.usage) ? ' < ' + help.usage + ' > ' : ''}\``,
+            `**Usage**: \`${Config.prefix}${target}${(help.usage) ? ' < ' + help.usage + ' > ' : ''}\``,
             `**Info**: ${help.info}`
         ])
 
@@ -173,7 +174,7 @@ export const commands: Types.ICommands = {
     topic({message, targets, guild}) {
         const helps: Types.IHelps = global.Plugins.getHelps()
         const topicList: string[] = global.Plugins.getTopics()
-        const prefix: string = global.Config.prefix
+        const prefix: string = Config.prefix
         const embedTopicInvalid: CustomEmbed = Embed.notify(
             'Listas de comandos',
             `Consulta las listas usando **${prefix}topic** *topic*`

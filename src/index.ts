@@ -18,20 +18,12 @@ try {
  **********************/
 declare const global: any
 
-import * as Config from "./../config/config.js"
-global.Config = Config
-
 import { Client } from "./client"
 global.Client = Client
 
 import { Plugins } from "./plugins"
 global.Plugins = Plugins
 
-// Load plugins
-try {
-    Plugins.loader.loadPlugins()
-} catch (err) {
-    if (err) throw err
-}
+Plugins.loader.loadPlugins()
 
 Client.connect()

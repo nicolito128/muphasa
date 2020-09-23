@@ -1,6 +1,6 @@
 import * as fs from 'fs'
 import * as Discord from 'discord.js'
-import * as Config from './../config/config.js'
+import Config from './Config'
 
 export interface IPluginStruct {
     [p: string]: CollectionReturnType
@@ -104,6 +104,7 @@ export class PluginsLoader {
             Object.keys(plugin.commands).forEach((key: string) => {
                 value = plugin.commands[key] as ICommandHandler
                 this.commands.insert(key, value)
+                console.log(`{ Command '${key}' loaded }`)
             })
         }
 

@@ -1,5 +1,5 @@
 import * as Discord from "discord.js"
-import * as Config from "./../config/config.js"
+import Config from "./Config"
 import { Messages } from "./plugins"
 
 export class CustomClient extends Discord.Client {
@@ -10,10 +10,6 @@ export class CustomClient extends Discord.Client {
         super()
         this.activity = `Prefix: ${Config.prefix}`
         this.user = super.user
-    }
-
-    setActivityMessage(msg: string) {
-        this.activity = msg
     }
 
     handleWarn() {
