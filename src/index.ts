@@ -13,8 +13,14 @@ try {
 	throw new Error("We require Node.js version 10 or later; you're using " + process.version);
 }
 
+/** Globals **/
+declare const global: any;
+
 import { Client } from './client'
+global.Client = Client;
+
 import { Plugins } from './plugins'
+global.Plugins = Plugins
 
 Plugins.loadCommands()
 
