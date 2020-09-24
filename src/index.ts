@@ -13,18 +13,10 @@ try {
 	throw new Error("We require Node.js version 10 or later; you're using " + process.version);
 }
 
-/**********************
- * Set globals
- **********************/
-declare const global: any
+import { Client } from './client'
+import { Plugins } from './plugins'
 
-import { CustomClient } from "./client"
-const Client = new CustomClient()
-global.Client = Client
+Plugins.loadCommands()
 
-import { Plugins } from "./plugins"
-global.Plugins = Plugins
-
-Plugins.loader.loadPlugins()
-
+// Run
 Client.connect()
