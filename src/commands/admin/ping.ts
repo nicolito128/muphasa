@@ -1,3 +1,4 @@
+import { Client } from './../../client'
 import { Embed } from './../../lib/embed'
 import { Command, RunArguments } from './../../plugins'
 
@@ -16,7 +17,7 @@ export = class PingCommand extends Command {
                 title: ':ping_pong: Pong!',
                 desc: [
                 `Latency: ${msg.createdTimestamp - message.createdTimestamp}ms`,
-                `API Latency ${Math.round(global.Client.ws.ping)}ms`
+                `API Latency ${Math.round(Client.ws.ping)}ms`
                 ]
             }))
         })
