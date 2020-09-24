@@ -5,6 +5,12 @@ interface IEmbedOptions {
     [o: string]: any;
 }
 
+interface NotifyOptions {
+    title: string;
+    desc: string | string[];
+    color?: Discord.ColorResolvable
+}
+
 function generateRandomHex(): string {
     const hexNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'A', 'B', 'C', 'D', 'E', 'F']
     let random: number
@@ -34,12 +40,12 @@ export class CustomEmbed extends Discord.MessageEmbed {
             .setDescription(`No tienes suficiente autoridad para usar este comando. ${permission ? 'Requiere: `' + permission + '`' : ''}`)
     }
 
-    notify(title: string, desc: string | string[], color?: Discord.ColorResolvable): CustomEmbed {
-        if (!color) color = generateRandomHex()
+    notify(options: NotifyOptions): CustomEmbed {
+        if (!options.color) options.color = generateRandomHex()
         return this.create()
-            .setTitle(title)
-            .setColor(color)
-            .setDescription(desc)
+            .setTitle(options.title)
+            .setColor(options.color)
+            .setDescription(options.desc)
     }
 }
 

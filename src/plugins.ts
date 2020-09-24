@@ -1,199 +1,131 @@
 import * as fs from 'fs'
 import * as Discord from 'discord.js'
 import Config from './Config'
+import { Client, CustomClient } from './client'
 
-export interface IPluginStruct {
-    [p: string]: CollectionReturnType
+interface CommandConfig {
+	name: string;
+	desc?: string;
+	group?: string;
+	usage?: string;
+	alias?: string[];
+	ownerOnly?: boolean;
+	guildOnly?: boolean;
 }
 
-export type Message = Discord.Message
-
-// Helps
-export interface IHelps {
-    [h: string]: IHelpData
+export interface RunArguments {
+	message: Discord.Message;
+	user: Discord.User;
+	client: CustomClient;
+	guild: Discord.Guild | null;
+	targets: string[];
+	cmd: string | undefined;
 }
 
-interface IHelpData {
-    topic: string;
-    usage?: string;
-    info: string | string[];
+export abstract class Command {
+	readonly config: CommandConfig
+
+	constructor(config: CommandConfig) {
+		this.config = config
+	}
+
+	run({}: RunArguments): void | Promise<void> {}
 }
 
-// Commands
-export interface ICommands {
-    [c: string]: ICommandHandler | string
+export class PluginSystem {
+	private _commands: Discord.Collection<string, Command>
+
+	constructor() {
+		this._commands = new Discord.Collection<string, Command>()
+	}
+
+	get commands(): Discord.Collection<string, Command> {
+		return this._commands
+	}
+
+	get groups(): string[] {
+		return [...new Set(this._commands.map(cmd => cmd.config.group ? cmd.config.group : 'basic'))]
+	}
+
+	getCommand(name: string): Command | null {
+		return this._commands.has(name) ? this._commands.get(name) as Command : null
+	}
+
+	loadCommands() {
+		fs.readdirSync('src/commands')
+		.map(folder => {
+			fs.readdirSync(`src/commands/${folder}`)
+			.forEach(file => {
+				if (file.endsWith('.ts')) {
+					const C = require(`./commands/${folder}/${file.slice(0, -3)}`);
+					this.loadCommand(this.checkCommandConfig(new C()))
+				}
+			})
+		})
+	}
+
+	loadCommand<Cmd extends Command>(cmd: Cmd) {
+		if (!cmd || !cmd.config && !cmd.run) return;
+
+		this._commands.set(cmd.config.name, cmd)
+		if (cmd.config.alias && cmd.config.alias.length >= 1) {
+			cmd.config.alias.forEach(c => this._commands.set(c, cmd))
+		}
+		console.log(`-> Command '${cmd.config.name}' loaded`)
+	}
+
+	private checkCommandConfig<Cmd extends Command>(cmd: Cmd): Cmd {
+		if (cmd && cmd.config) {
+			if (!cmd.config.desc) cmd.config.desc = ""
+			if (!cmd.config.alias) cmd.config.alias = []
+			if (!cmd.config.group) cmd.config.group = "utils"
+			if (!cmd.config.usage) cmd.config.usage = ""
+			if (!cmd.config.ownerOnly) cmd.config.ownerOnly = false
+			if (!cmd.config.guildOnly) cmd.config.guildOnly = false
+			return cmd
+		}
+
+		return cmd
+	}
 }
 
-interface ICommandParams {
-    message: Message;
-    user: Discord.User;
-    targets: string[];
-    guild: Discord.Guild | null;
-    cmd: string | undefined;
+class MessageHandler {
+	private plugins: PluginSystem;
+
+	constructor(plugins: PluginSystem) {
+		this.plugins = plugins
+	}
+
+	eval(message: Discord.Message) {
+		if (message.author.bot) return;
+
+		if (message.content.toLowerCase().trim().startsWith(Config.prefix)) {
+			const params = this.parseMessage(message)
+			let command: Command | null = null;
+
+			if (params.cmd) command = this.plugins.getCommand(params.cmd)
+			if (command) {
+				if (command.config.guildOnly && message.channel.type === 'dm') {
+					message.channel.send('This command is only available on a Server.')
+				}
+				if (command.config.ownerOnly && message.author.id !== Config.owner) return;
+
+				command.run({...params})
+				return;
+			}
+		}
+	}
+
+	private parseMessage(message: Discord.Message): RunArguments {
+		const user: Discord.User = message.author;
+        const guild: Discord.Guild | null = (message.guild) ? message.guild : null;
+        const targets: string[] = message.content.slice(Config.prefix.length).trim().split(' ');
+        const cmd: string | undefined = targets?.shift().toLowerCase();
+        const client = Client;
+
+        return {message, client, user, guild, targets, cmd}
+	}
 }
 
-type ICommandHandler = ({message, user, targets, guild, cmd}: ICommandParams) => any;
-
-// Collection
-type CollectionReturnType = ICommands | IHelps
-type CollectionValueType = ICommandHandler | IHelpData
-
-export class PluginCollection extends Map {
-    constructor() {
-        super()
-    }
-
-    insert(key: string, value: CollectionValueType): void {
-        this.set(key, value)
-    }
-
-    getAll(): CollectionReturnType {
-        let data: CollectionReturnType = Object.create(null)
-        this.forEach( (value: CollectionValueType, key: string) => {
-            data[key] = value
-        })
-
-        return data
-    }
-}
-
-export class PluginsLoader {
-    private commands: PluginCollection;
-    private helps: PluginCollection;
-
-    constructor() {
-        this.commands = new PluginCollection()
-        this.helps = new PluginCollection()
-    }
-
-    getCommands() {
-        return this.commands
-    }
-
-    getHelps() {
-        return this.helps
-    }
-
-    loadPlugins(): void {
-        const files: string[] = fs.readdirSync('src/plugins/')
-        const plugins: IPluginStruct[] = files.map((file: string) => {
-            let plugin
-
-            if (file.endsWith('.ts')) {
-                plugin = require(`./plugins/${file.slice(0, -3)}`);
-            } else if (file.endsWith('.js')) {
-                plugin = require(`../src/plugins/${file}`);
-            } else {
-                return;
-            }
-
-            return plugin
-        })
-
-        plugins.forEach((plugin: IPluginStruct) => {
-            this.loadPlugin(this.filterPlugin(plugin))
-        })
-
-        console.log(`Plugins loaded successfully!`)
-    }
-
-    loadPlugin(plugin: IPluginStruct): void {
-        let value: CollectionValueType
-
-        if (plugin.commands) {
-            Object.keys(plugin.commands).forEach((key: string) => {
-                value = plugin.commands[key] as ICommandHandler
-                this.commands.insert(key, value)
-                console.log(`{ Command '${key}' loaded }`)
-            })
-        }
-
-        if (plugin.help) {
-            Object.keys(plugin.help).forEach((key: string) => {
-                value = plugin.help[key] as IHelpData
-                this.helps.insert(key, value)
-            })
-        }
-    }
-
-    filterPlugin(plugin: IPluginStruct): IPluginStruct {
-        if (plugin.commands) {
-            Object.keys(plugin.commands).forEach((key) => {
-                switch (typeof plugin.commands[key]) {
-                    case 'string':
-                        let commandAlias = plugin.commands[key] as string
-                        if (plugin.commands.hasOwnProperty(commandAlias)) plugin.commands[key] = plugin.commands[commandAlias];
-                        break;
-                    case 'function':
-                        break;
-                    default:
-                        delete plugin.commands[key]
-                }
-            })
-        }
-
-        return plugin
-    }
-}
-
-export class MessagesHandler {
-    private plugins: PluginsHandler;
-
-    constructor(plugins: PluginsHandler) {
-        this.plugins = plugins
-    }
-
-    eval(message: Message): any {
-        let prefix: string = Config.prefix
-
-        if (message.content.toLowerCase().startsWith(prefix) || message.content.startsWith(prefix)) {
-            if (message.author.bot) return null
-
-            const params: ICommandParams = this.parseToCommand(message, prefix)
-            let command: ICommandHandler | undefined
-
-            if (params.cmd) command = this.plugins.getCommand(params.cmd)
-            if (command) return command({...params})
-        }
-    }
-
-    parseToCommand(message: Message, prefix: string): ICommandParams {
-        let user: Discord.User = message.author
-        let targets: string[] = message.content.slice(prefix.length).trim().split(' ')
-        let cmd: string | undefined = targets?.shift()?.toLowerCase()
-        let guild: Discord.Guild | null = (message.member) ? message.member.guild : null
-
-        return {message, user, targets, guild, cmd}
-    }
-}
-
-export class PluginsHandler {
-    loader: PluginsLoader;
-
-    constructor(loader: PluginsLoader) {
-        this.loader = loader
-    }
-    
-    getCommand(cmd: string): ICommandHandler | undefined {
-        return this.loader.getCommands().get(cmd)
-    }
-
-    getHelp(help: string): IHelpData | undefined {
-        return this.loader.getHelps()?.get(help)
-    }
-
-    getHelps(): IHelps {
-        return this.loader.getHelps().getAll() as IHelps
-    }
-
-    getTopics(): string[] {
-        let topics: Set<string> = new Set()
-        this.loader.getHelps().forEach((value: any) => {
-            topics.add(value.topic)
-        })
-        return [...topics]
-    }
-}
-
-export const Plugins = new PluginsHandler(new PluginsLoader())
-export const Messages = new MessagesHandler(Plugins)
+export const Plugins = new PluginSystem()
+export const Message = new MessageHandler(Plugins)
