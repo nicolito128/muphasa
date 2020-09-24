@@ -62,8 +62,3 @@ try {
 }
 
 sucrase('./src', './.src-dist');
-sucrase('./lib', './.lib-dist');
-
-replace('.src-dist', [
-	{regex: /(require\(.*?)(lib)/g, replace: `$1.$2-dist`},
-]);
