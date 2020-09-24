@@ -3,6 +3,7 @@ import * as Discord from 'discord.js'
 import Config from './Config'
 import { Client, CustomClient } from './client'
 
+// Configuration required to create and use the commands.
 interface CommandConfig {
 	name: string;
 	desc?: string;
@@ -13,6 +14,8 @@ interface CommandConfig {
 	guildOnly?: boolean;
 }
 
+// An object for the run method in a command.
+// Provides help to create a command.
 export interface RunArguments {
 	message: Discord.Message;
 	user: Discord.User;
@@ -22,6 +25,7 @@ export interface RunArguments {
 	cmd: string | undefined;
 }
 
+// Every command inherits from Command.
 export abstract class Command {
 	readonly config: CommandConfig
 
@@ -32,7 +36,16 @@ export abstract class Command {
 	run({}: RunArguments): void | Promise<void> {}
 }
 
+/**
+	* PluginSystem:
+	* 	The master Class of Plugins. It's responsible for managing everything
+	* 	related to plugins (commands) loading them and providing extra functionalities.
+*/
 export class PluginSystem {
+
+	/**
+		* A collection (extends to Map) to store and manage commands.
+	*/
 	private _commands: Discord.Collection<string, Command>
 
 	constructor() {
@@ -74,6 +87,11 @@ export class PluginSystem {
 		console.log(`-> Command '${cmd.config.name}' loaded`)
 	}
 
+	/**
+		* checkCommmandConfig:
+		* 	Check the unassigned properties of config: CommandConfig
+		* 	and give them a default value.
+	*/
 	private checkCommandConfig<Cmd extends Command>(cmd: Cmd): Cmd {
 		if (cmd && cmd.config) {
 			if (!cmd.config.desc) cmd.config.desc = ""
@@ -89,6 +107,10 @@ export class PluginSystem {
 	}
 }
 
+/**
+	* MessageHandler
+	* 	Eval messages and provide responses.
+*/
 class MessageHandler {
 	private plugins: PluginSystem;
 
