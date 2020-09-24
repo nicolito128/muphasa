@@ -1,6 +1,6 @@
-import * as Discord from "discord.js"
-import Config from "./Config"
-import { Messages } from "./plugins"
+import * as Discord from 'discord.js'
+import Config from './Config'
+import { Message } from './plugins'
 
 export class CustomClient extends Discord.Client {
     readonly user: Discord.ClientUser | null;
@@ -23,7 +23,9 @@ export class CustomClient extends Discord.Client {
             throw new Error(`${err}\n`)
         })
 
-        this.on('message', async (msg) => await Messages.eval(msg))
+        this.on('message', async (msg) => {
+            await Message.eval(msg)
+        })
     }
 
     connect() {
@@ -35,3 +37,5 @@ export class CustomClient extends Discord.Client {
         console.log(`/***********************/\n`)
     }
 }
+
+export const Client = new CustomClient()
