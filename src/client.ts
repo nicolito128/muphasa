@@ -1,6 +1,6 @@
 import * as Discord from 'discord.js'
 import Config from './Config'
-import { Message } from './plugins'
+import { MessageManager } from './plugins'
 
 export class CustomClient extends Discord.Client {
     readonly user: Discord.ClientUser | null;
@@ -24,7 +24,7 @@ export class CustomClient extends Discord.Client {
         })
 
         this.on('message', async (msg) => {
-            await Message.eval(msg)
+            await MessageManager.eval(msg)
         })
     }
 
