@@ -1,4 +1,4 @@
-import { Message, User, Guild } from 'discord.js'
+import { Message, User, Guild, PermissionResolvable } from 'discord.js'
 import { CustomClient } from './../client'
 
 // Configuration required to create and use the commands.
@@ -11,6 +11,7 @@ interface CommandConfig {
 	ownerOnly?: boolean;
 	guildOnly?: boolean;
 	cooldown?: number;
+	permissions?: PermissionResolvable;
 }
 
 // An object for the run method in a command.
