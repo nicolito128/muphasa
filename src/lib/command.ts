@@ -2,7 +2,7 @@ import { Message, User, Guild, PermissionResolvable } from 'discord.js'
 import { CustomClient } from './../client'
 
 // Configuration required to create and use the commands.
-interface CommandConfig {
+export interface CommandConfig {
 	name: string;
 	desc?: string;
 	group?: string;
