@@ -20,7 +20,6 @@ export class CustomClient extends Discord.Client {
         })
 
         this.on('warn', (warn) => console.log(`WARN MESSAGE: ${warn}`))
-        this.on('debug', (status) => console.log(`DEBUG STATUS: ${status}`))
         this.on('error', (err) => {
             throw new Error(`${err}\n`)
         })
