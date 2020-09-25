@@ -1,5 +1,5 @@
+import { Command, RunArguments } from './../../lib/command'
 import { Guild } from 'discord.js'
-import { Command, RunArguments } from './../../plugins'
 import { Embed } from './../../lib/embed'
 
 export = class ServerCommand extends Command {

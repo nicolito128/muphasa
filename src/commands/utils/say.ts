@@ -1,5 +1,5 @@
+import { Command, RunArguments } from './../../lib/command'
 import { Embed } from './../../lib/embed'
-import { Command, RunArguments } from './../../plugins'
 
 export = class SayCommand extends Command {
 

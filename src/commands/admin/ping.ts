@@ -1,6 +1,6 @@
+import { Command, RunArguments } from './../../lib/command'
 import { Client } from './../../client'
 import { Embed } from './../../lib/embed'
-import { Command, RunArguments } from './../../plugins'
 
 export = class PingCommand extends Command {
 	constructor(){

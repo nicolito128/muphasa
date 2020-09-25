@@ -1,6 +1,6 @@
+import { Command, RunArguments } from './../../lib/command'
 import { Embed } from './../../lib/embed'
 import { toId } from './../../lib/text'
-import { Command, RunArguments } from './../../plugins'
 
 type RGB = {r: number, g: number, b: number}
 

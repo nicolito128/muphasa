@@ -1,6 +1,6 @@
-import Config from './../../Config'
-import { Command, RunArguments } from './../../plugins'
+import { Command, RunArguments } from './../../lib/command'
 import { Embed } from './../../lib/embed'
+import Config from './../../Config'
 
 export = class EvalCommand extends Command {
 	constructor() {

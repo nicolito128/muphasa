@@ -1,6 +1,6 @@
-import { Client } from './../../client'
+import { Command, RunArguments } from './../../lib/command'
 import { Embed } from './../../lib/embed'
-import { Command, RunArguments } from './../../plugins'
+import { Client } from './../../client'
 
 export = class InviteCommand extends Command {
 	constructor(){

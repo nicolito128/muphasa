@@ -1,40 +1,8 @@
 import * as fs from 'fs'
-import * as Discord from 'discord.js'
+import { Message, Guild, User, Collection } from 'discord.js'
+import { Command, RunArguments } from './lib/command'
+import { Client } from './client'
 import Config from './Config'
-import { Client, CustomClient } from './client'
-
-// Configuration required to create and use the commands.
-interface CommandConfig {
-	name: string;
-	desc?: string;
-	group?: string;
-	usage?: string;
-	alias?: string[];
-	ownerOnly?: boolean;
-	guildOnly?: boolean;
-}
-
-// An object for the run method in a command.
-// Provides help to create a command.
-export interface RunArguments {
-	message: Discord.Message;
-	user: Discord.User;
-	client: CustomClient;
-	guild: Discord.Guild | null;
-	targets: string[];
-	cmd: string | undefined;
-}
-
-// Every command inherits from Command.
-export abstract class Command {
-	readonly config: CommandConfig
-
-	constructor(config: CommandConfig) {
-		this.config = config
-	}
-
-	run({}: RunArguments): void | Promise<void> {}
-}
 
 /**
 	* PluginSystem:
@@ -44,24 +12,24 @@ export abstract class Command {
 export class PluginSystem {
 
 	/**
-		* A collection (extends to Map) to store and manage commands.
+		* A collection (extends Map) to store and manage commands.
 	*/
-	private _commands: Discord.Collection<string, Command>
+	private _commands: Collection<string, Command>
 
 	constructor() {
-		this._commands = new Discord.Collection<string, Command>()
+		this._commands = new Collection<string, Command>()
 	}
 
-	get commands(): Discord.Collection<string, Command> {
+	get commands(): Collection<string, Command> {
 		return this._commands
 	}
 
 	get groups(): string[] {
-		return [...new Set(this._commands.map(cmd => cmd.config.group ? cmd.config.group : 'basic'))]
+		return [...new Set(this._commands.map((cmd: Command) => cmd.config.group ? cmd.config.group : 'basic'))] as string[]
 	}
 
 	getCommand(name: string): Command | null {
-		return this._commands.find(cmd => cmd.config.name == name) || this._commands.find(cmd => cmd.config.alias.includes(name)) || null;
+		return this._commands.find((cmd: Command) => cmd.config.name == name) || this._commands.find((cmd: Command) => cmd.config.alias?.includes(name)) || null;
 	}
 
 	loadCommands() {
@@ -84,6 +52,23 @@ export class PluginSystem {
 		console.log(`-> Command '${cmd.config.name}' loaded`)
 	}
 
+	emitCommand(params: RunArguments) {
+		const { message } = params;
+		let command: Command | null = null;
+
+		if (params.cmd) command = this.getCommand(params.cmd)
+		if (command) {
+			if (command.config.ownerOnly && message.author.id !== Config.owner) return;
+			if (command.config.guildOnly && message.channel.type === 'dm') {
+				message.channel.send('Este comando sólo está disponible para un servidor de discord.')
+				return;
+			}
+
+			command.run(params)
+		}
+
+	}
+
 	/**
 		* checkCommmandConfig:
 		* 	Check the unassigned properties of config: CommandConfig
@@ -97,6 +82,7 @@ export class PluginSystem {
 			if (!cmd.config.usage) cmd.config.usage = ""
 			if (!cmd.config.ownerOnly) cmd.config.ownerOnly = false
 			if (!cmd.config.guildOnly) cmd.config.guildOnly = false
+			if (!cmd.config.cooldown) cmd.config.cooldown = 0
 			return cmd
 		}
 
@@ -115,32 +101,20 @@ class MessageHandler {
 		this.plugins = plugins
 	}
 
-	eval(message: Discord.Message) {
+	eval(message: Message) {
 		if (message.author.bot) return;
 
 		if (message.content.toLowerCase().trim().startsWith(Config.prefix)) {
 			const params = this.getRunArguments(message)
-			let command: Command | null = null;
-
-			if (params.cmd) command = this.plugins.getCommand(params.cmd)
-			if (command) {
-				if (command.config.ownerOnly && message.author.id !== Config.owner) return;
-				if (command.config.guildOnly && message.channel.type === 'dm') {
-					message.channel.send('This command is only available on a Server.')
-					return;
-				}
-
-				command.run({...params})
-				return;
-			}
+			this.plugins.emitCommand(params)
 		}
 	}
 
-	private getRunArguments(message: Discord.Message): RunArguments {
-		const user: Discord.User = message.author;
-        const guild: Discord.Guild | null = (message.guild) ? message.guild : null;
+	private getRunArguments(message: Message): RunArguments {
+		const user: User = message.author;
+        const guild: Guild | null = (message.guild) ? message.guild : null;
         const targets: string[] = message.content.slice(Config.prefix.length).trim().split(' ');
-        const cmd: string | undefined = targets?.shift().toLowerCase();
+        const cmd: string = targets?.shift()?.toLowerCase() || "";
         const client = Client;
 
         return {message, client, user, guild, targets, cmd}
@@ -148,4 +122,4 @@ class MessageHandler {
 }
 
 export const Plugins = new PluginSystem()
-export const Message = new MessageHandler(Plugins)
+export const MessageManager = new MessageHandler(Plugins)
