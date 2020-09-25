@@ -26,6 +26,7 @@ export = class HelpCommand extends Command {
         	message.channel.send('No hay ayuda disponible sobre este comando o no existe.')
         	return;
         }
+        if (help && help.name === 'group') return;
         if (guild) id = guild.id;
 
         const description = [
