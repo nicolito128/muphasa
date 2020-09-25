@@ -1,16 +1,18 @@
 import * as Discord from 'discord.js'
 import Config from './Config'
-import { MessageManager } from './plugins'
+import { Plugins, PluginSystem, MessageManager } from './plugins'
 
 export class CustomClient extends Discord.Client {
     readonly user: Discord.ClientUser | null;
+    readonly plugins: PluginSystem;
 
-    constructor() {
+    constructor(plugins: PluginSystem) {
         super({
             restTimeOffset: 1000
         })
 
         this.user = super.user
+        this.plugins = plugins
 
         this.once("ready", () => {
             void (this.user as Discord.ClientUser).setActivity(`Prefix: ${Config.prefix}`)
@@ -38,4 +40,4 @@ export class CustomClient extends Discord.Client {
     }
 }
 
-export const Client = new CustomClient()
+export const Client = new CustomClient(Plugins)
