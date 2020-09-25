@@ -61,7 +61,7 @@ export class PluginSystem {
 	}
 
 	getCommand(name: string): Command | null {
-		return this._commands.has(name) ? this._commands.get(name) as Command : null
+		return this._commands.find(cmd => cmd.config.name == name) || this._commands.find(cmd => cmd.config.alias.includes(name)) || null;
 	}
 
 	loadCommands() {
@@ -81,9 +81,6 @@ export class PluginSystem {
 		if (!cmd || !cmd.config && !cmd.run) return;
 
 		this._commands.set(cmd.config.name, cmd)
-		if (cmd.config.alias && cmd.config.alias.length >= 1) {
-			cmd.config.alias.forEach(c => this._commands.set(c, cmd))
-		}
 		console.log(`-> Command '${cmd.config.name}' loaded`)
 	}
 
@@ -122,15 +119,16 @@ class MessageHandler {
 		if (message.author.bot) return;
 
 		if (message.content.toLowerCase().trim().startsWith(Config.prefix)) {
-			const params = this.parseMessage(message)
+			const params = this.getRunArguments(message)
 			let command: Command | null = null;
 
 			if (params.cmd) command = this.plugins.getCommand(params.cmd)
 			if (command) {
+				if (command.config.ownerOnly && message.author.id !== Config.owner) return;
 				if (command.config.guildOnly && message.channel.type === 'dm') {
 					message.channel.send('This command is only available on a Server.')
+					return;
 				}
-				if (command.config.ownerOnly && message.author.id !== Config.owner) return;
 
 				command.run({...params})
 				return;
@@ -138,7 +136,7 @@ class MessageHandler {
 		}
 	}
 
-	private parseMessage(message: Discord.Message): RunArguments {
+	private getRunArguments(message: Discord.Message): RunArguments {
 		const user: Discord.User = message.author;
         const guild: Discord.Guild | null = (message.guild) ? message.guild : null;
         const targets: string[] = message.content.slice(Config.prefix.length).trim().split(' ');
