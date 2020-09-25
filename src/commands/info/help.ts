@@ -1,7 +1,6 @@
 import { Command, RunArguments } from './../../lib/command'
 import { Embed } from './../../lib/embed'
 import { Plugins } from './../../plugins'
-import { Client } from './../../client'
 import Config from './../../Config'
 
 export = class HelpCommand extends Command {
