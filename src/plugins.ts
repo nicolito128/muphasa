@@ -66,7 +66,6 @@ export class PluginSystem {
 			if (command.config.permissions != 'SEND_MESSAGES' && message.channel.type == 'text') {
 				const bot: GuildMember | null = (params.guild as Guild).members.cache.find(member => member.user.bot && member.id == Client.user!.id) || null;
 				if (bot && !bot.hasPermission(command.config.permissions)) {
-					console.log(bot.hasPermission(command.config.permissions))
 					message.channel.send(`No puedo ejecutar ese comando. Me falta el permiso de \`${command.config.permissions}\``)
 					return;
 				}
