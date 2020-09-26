@@ -1,5 +1,6 @@
 import { Command, RunArguments } from './../../lib/command'
 import { Embed } from './../../lib/embed'
+import { toId } from './../../lib/text'
 import { Plugins } from './../../plugins'
 import Config from './../../Config'
 
@@ -18,7 +19,7 @@ export = class HelpCommand extends Command {
 			return;
 		}
 
-        const target: string = targets.join();
+        const target: string = toId(targets.join());
         const help = Plugins.commands.find(cmd => cmd.config.name == target)?.config;
         let id: string = "";
 
@@ -26,7 +27,7 @@ export = class HelpCommand extends Command {
         	message.channel.send('No hay ayuda disponible sobre este comando o no existe.')
         	return;
         }
-        if (help && help.name === 'group') return;
+
         if (guild) id = guild.id;
 
         const description = [

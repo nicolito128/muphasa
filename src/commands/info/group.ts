@@ -1,6 +1,5 @@
 import { Command, RunArguments } from './../../lib/command'
 import { Embed } from './../../lib/embed'
-import { toId } from './../../lib/text'
 import { Plugins } from './../../plugins'
 import Config from './../../Config'
 
@@ -20,7 +19,7 @@ export = class GroupCommand extends Command {
             title: 'Categorías de comandos',
             desc: `Consulta las lista de comandos usando **${prefix} group** *group name*\n\n \`${groupList.join(' - ')}\``
         })
-        const group = toId(targets.join())
+        const group = targets.join()
 
         if (!group) {
             message.channel.send(embedInvalid)
