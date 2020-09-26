@@ -1,0 +1,41 @@
+import { Guild, GuildMember } from 'discord.js'
+import { Command, RunArguments } from './../../lib/command'
+import { unmuteMember } from './../../lib/moderation'
+import { Embed } from './../../lib/embed'
+
+export = class UnmuteCommand extends Command {
+    constructor() {
+        super({
+            name: 'unmute',
+            desc: 'Si el miembro mencionado se encuentra silenciado devuelvele el permiso de escribir (remueve el rol "Muted").',
+            usage: '@mention',
+            group: 'moderation',
+            guildOnly: true,
+            permissions: 'MANAGE_ROLES'
+        })
+    }
+
+    run({message, guild, client, targets}: RunArguments) {
+        const Guild = guild as Guild
+
+        if (message.member && !message.member.hasPermission('MANAGE_ROLES')) {
+            message.channel.send(Embed.denied('MANAGE_ROLES'))
+            return;
+        }
+
+        if (message.mentions.members === null) {
+            message.channel.send('Necesito que menciones a un usuario :person_frowning:')
+            return;
+        }
+        
+        const targetMember = message.mentions.members.first() as GuildMember
+        const unmuteResult = unmuteMember(targetMember)
+
+        if (!unmuteResult) {
+            message.channel.send(`El miembro no estaba silenciado :speak_no_evil:`)
+            return;
+        }
+
+        message.channel.send(`${targetMember.user} ya no estará silenciado :monkey_face:`)
+    }
+}
