@@ -63,6 +63,8 @@ export class PluginSystem {
 				message.channel.send('Este comando sólo está disponible en servidores de discord.')
 				return;
 			}
+
+			// If the bot doesn't have the permissions, it returns an error message.
 			if (command.config.permissions != 'SEND_MESSAGES' && message.channel.type == 'text') {
 				const bot: GuildMember | null = (params.guild as Guild).members.cache.find(member => member.user.bot && member.id == Client.user!.id) || null;
 				if (bot && !bot.hasPermission(command.config.permissions)) {
@@ -89,6 +91,7 @@ export class PluginSystem {
 			if (!cmd.config.usage) cmd.config.usage = ""
 			if (!cmd.config.ownerOnly) cmd.config.ownerOnly = false
 			if (!cmd.config.guildOnly) cmd.config.guildOnly = false
+			if (!cmd.config.cooldown) cmd.config.cooldown = 0
 			if (!cmd.config.permissions) cmd.config.permissions = 'SEND_MESSAGES'
 
 			return cmd
