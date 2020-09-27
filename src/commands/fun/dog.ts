@@ -26,7 +26,7 @@ export = class DogCommand extends Command {
             .setURL(image.message)
             .setImage(image.message)
             .setAuthor(user.tag, user.displayAvatarURL())
-            .setFooter('Impulsado por dog.ceo', 'https://dog.ceo/img/dog-api-logo.svg')
+            .setFooter('Impulsado por dog.ceo', 'https://dog.ceo/img/favicon.png')
 
             message.channel.send(embed)
         } catch(error) {
