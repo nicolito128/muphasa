@@ -14,7 +14,8 @@ export = class CatCommand extends Command {
 			name: 'cat',
 			desc: '¡Devuelve gatitos!',
 			group: 'fun',
-            alias: ['michi']
+            alias: ['michi'],
+            cooldown: 10
 		})
 	}
 

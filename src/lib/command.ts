@@ -10,6 +10,7 @@ export interface CommandConfig {
 	alias?: string[];
 	ownerOnly?: boolean;
 	guildOnly?: boolean;
+	cooldown?: number;
 	permissions?: PermissionResolvable;
 }
 

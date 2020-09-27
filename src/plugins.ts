@@ -11,13 +11,18 @@ import Config from './Config'
 */
 export class PluginSystem {
 
-	/**
-		* A collection (extends Map) to store and manage commands.
-	*/
+	/** A collection (extends Map) to store and manage commands.*/
 	private _commands: Collection<string, Command>
+
+	/* 
+		* Manage commands cooldown
+		* 	Types: CommandName: string -> Map<userid: string, timestamp: number>
+	*/
+	private _cooldowns: Collection<string, Map<string, number>>
 
 	constructor() {
 		this._commands = new Collection<string, Command>()
+		this._cooldowns = new Collection<string, Map<string, number>>()
 	}
 
 	get commands(): Collection<string, Command> {
@@ -50,14 +55,24 @@ export class PluginSystem {
 
 		this._commands.set(cmd.config.name, cmd)
 		console.log(`-> Command '${cmd.config.name}' loaded`)
+
+		// If the command have a cooldown create It in the collection
+		if (cmd.config.cooldown && !this._cooldowns.has(cmd.config.name)) {
+			this._cooldowns.set(cmd.config.name, new Map<string, number>())
+			console.log(`--> '${cmd.config.name}' cooldown created`)
+		}
 	}
 
-	emitCommand(params: RunArguments) {
-		const { message } = params;
+	async emitCommand(params: RunArguments) {
+		const { message, user } = params;
 		let command: Command | null = this.getCommand(params.cmd)
 		if (!command) return;
 
-		if (command.config.ownerOnly && message.author.id !== Config.owner) return;
+		if (command.config.ownerOnly && message.author.id !== Config.owner) {
+			message.channel.send('Sólo el propietario del Bot puede utilizar este comando.')
+			return;
+		}
+
 		if (command.config.guildOnly && message.channel.type === 'dm') {
 			message.channel.send('Este comando sólo está disponible en servidores de discord.')
 			return;
@@ -70,6 +85,27 @@ export class PluginSystem {
 				message.channel.send(`No puedo ejecutar ese comando. Me falta el permiso de \`${command.config.permissions}\``)
 				return;
 			}
+		}
+
+		// Cooldown verification
+		if (command.config.cooldown && command.config.cooldown > 0 && this._cooldowns.has(command.config.name)) {
+			const cooldown = this._cooldowns.get(command.config.name) as Map<string, number>
+
+			// If the user has previously used the command return an error message
+			if (cooldown.has(user.id)) {
+				const expiration: number = (command.config.cooldown * 1000) + (cooldown.get(user.id) as number)
+
+				if (Date.now() < expiration) {
+					message.channel.send(`¡No tan rápido ${user}!`)
+					message.channel.send(`Debes esperar **${command.config.cooldown} segundos** antes de poder volver a usar el comando \`${command.config.name}\``)
+					return;
+				}
+			}
+
+			// Clear cooldown after a while
+			await Client.setTimeout(() => cooldown.delete(user.id), command.config.cooldown * 1000)
+			// Set the user timestamp
+			await cooldown.set(user.id, Date.now())
 		}
 
 		command.run(params)
@@ -89,6 +125,7 @@ export class PluginSystem {
 			if (!cmd.config.ownerOnly) cmd.config.ownerOnly = false
 			if (!cmd.config.guildOnly) cmd.config.guildOnly = false
 			if (!cmd.config.permissions) cmd.config.permissions = 'SEND_MESSAGES'
+			if (!cmd.config.cooldown) cmd.config.cooldown = 0
 
 			return cmd
 		}

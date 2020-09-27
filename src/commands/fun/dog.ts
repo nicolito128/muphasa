@@ -15,7 +15,8 @@ export = class DogCommand extends Command {
 			name: 'dog',
 			desc: '¡Devuelve perritos!',
 			group: 'fun',
-            alias: ['goodboy']
+            alias: ['goodboy'],
+            cooldown: 10
 		})
 	}
 
