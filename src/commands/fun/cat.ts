@@ -1,22 +1,13 @@
-import * as querystring from 'query-string'
+import * as superagent from 'superagent'
 import { Command, RunArguments } from './../../lib/command'
 import { Embed } from './../../lib/embed'
-const r2 = require('r2');
 
 interface CatResponse {
-    breeds: any[];
-    id: string;
-    url: string;
-    width: number;
-    height: number;
+    file: string
 }
 
-const apiURL = 'https://api.thecatapi.com/'
-const apiKey = process.env.CAT_API_KEY
-
 export = class CatCommand extends Command {
-    readonly apiURL = 'https://api.thecatapi.com'
-    private readonly apiKey = process.env.CAT_API_KEY || ""
+    readonly apiURL = 'https://aws.random.cat/meow'
 
 	constructor(){
 		super({
@@ -27,14 +18,14 @@ export = class CatCommand extends Command {
 		})
 	}
 
-	async run({message}: RunArguments) {
+	async run({message, user}: RunArguments) {
         try{
-            const images = await this.loadImage(message.author.username);
-            const image = images[0];
-
+            const image = await this.getRandomCat()
             const embed = Embed.notify({title: 'Cat!', desc: ''})
-            .setImage(image.url)
-            .setFooter('Impulsado por TheCatApi.com', 'https://api.thecatapi.com/favicon.ico')
+            .setURL(image.file)
+            .setImage(image.file)
+            .setAuthor(user.tag, user.displayAvatarURL())
+            .setFooter('Impulsado por random.cat', 'https://purr.objects-us-east-1.dream.io/static/img/random.cat-logo.png')
 
             message.channel.send(embed)
         } catch(error) {
@@ -43,32 +34,8 @@ export = class CatCommand extends Command {
         }
 	}
 
-    async loadImage(subid: string): Promise<CatResponse[]> {
-        const headers = {
-            'X-API-KEY': this.apiKey
-        }
-
-        const query_params = {
-            //'has_breeds':true,
-            'mime_types':'jpg,png',
-            'size':'med',  
-            'sub_id': subid, 
-            'limit' : 1
-        }
-
-        let queryString = querystring.stringify(query_params)
-        let response: CatResponse[] = []
-    
-        try {
-            const url = apiURL + `v1/images/search?${queryString}`;
-            response = await r2.get(url, {headers}).json
-        } catch (e) {
-            console.log(e)
-        }
-
-        return response;
-
+    async getRandomCat(): Promise<CatResponse> {
+        const cat = await superagent.get(this.apiURL)
+        return cat.body as unknown as CatResponse
     }
-
-
 }
