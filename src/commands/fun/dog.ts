@@ -7,7 +7,7 @@ interface DogResponse {
     status: string;
 }
 
-export = class CatCommand extends Command {
+export = class DogCommand extends Command {
     readonly apiURL = 'https://dog.ceo/api/breeds/image/random'
 
 	constructor(){
