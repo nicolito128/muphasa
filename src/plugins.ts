@@ -88,7 +88,6 @@ export class PluginSystem {
 			if (!cmd.config.usage) cmd.config.usage = ""
 			if (!cmd.config.ownerOnly) cmd.config.ownerOnly = false
 			if (!cmd.config.guildOnly) cmd.config.guildOnly = false
-			if (!cmd.config.cooldown) cmd.config.cooldown = false
 			if (!cmd.config.permissions) cmd.config.permissions = 'SEND_MESSAGES'
 
 			return cmd
