@@ -21,7 +21,7 @@ export = class HugCommand extends Command {
 		})
 
 		this.phrases = [
-			':heart: ¡**$0** abrazó con mucho amor a **$1**!',
+			':heart: ¡**$1** abrazó con mucho amor a **$0**!',
 			':heart: **$0** está siendo apapachado por **$1**',
 			':heart: ¡Cuidado, **$0**! ¡**$1** te sacará todo el aire con tanto amor!',
 			':heart: **$0** abraza a **$1** con mucho cariño'
