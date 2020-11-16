@@ -43,9 +43,9 @@ export = class HugCommand extends Command {
 		})
 		.setFooter('Impulsado por Giphy API', 'https://i.imgur.com/gLB2xaj.png')
 
-		await this.hugs.getResponse().then(img => embed.setImage(img?.data.image_url || ""))
-
-		message.channel.send(embed)
+		this.slaps.getResponse()
+		.then(img => embed.setImage(img?.data.image_url || ""))
+		.then(() => message.channel.send(embed))
 	}
 
 	getRandomPhrase(first: string, second: string): string {
