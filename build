@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 
 try {
-	RegExp("\\p{Emoji}", "u");
+	// introduced in Node 11, but it's ok
+	[].flatMap(x => x);
 } catch (e) {
-	console.log("We require Node.js version 10 or later; you're using " + process.version);
+	console.log("We require Node.js version 12 or later; you're using " + process.version);
 	process.exit(1);
 }
 
+
 var child_process = require('child_process');
-var fs = require('fs');
-var path = require('path');
 
 function shell(cmd) {
 	child_process.execSync(cmd, {stdio: 'inherit', cwd: __dirname});
@@ -19,12 +19,14 @@ function sucrase(src, out) {
 	shell(`sucrase ${src} -d ${out} --transforms typescript,imports --enable-legacy-typescript-module-interop`);
 }
 
+// Check sucrase version
 try {
 	var sucraseVersion = require('sucrase').getVersion().split('.');
 	if (
 		parseInt(sucraseVersion[0]) < 3 ||
-		(parseInt(sucraseVersion[0]) === 3 && parseInt(sucraseVersion[1]) < 12)
-	) {
+		(parseInt(sucraseVersion[0]) === 3 && parseInt(sucraseVersion[1]) < 15)
+	)
+	{
 		throw new Error("Sucrase version too old");
 	}
 } catch (e) {
