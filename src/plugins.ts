@@ -1,6 +1,6 @@
 import * as fs from 'fs'
-import { Message, Guild, User, Collection, GuildMember } from 'discord.js'
-import { Command, RunArguments } from './lib/command'
+import { Message, Guild, User, Collection, GuildMember, PermissionResolvable } from 'discord.js'
+import { CommandContext, Arguments } from './lib/command'
 import { Client } from './client'
 import Config from './Config'
 
@@ -12,7 +12,7 @@ import Config from './Config'
 export class PluginSystem {
 
 	/** A collection (extends Map) to store and manage commands.*/
-	private _commands: Collection<string, Command>
+	private _commands: Collection<string, CommandContext>
 
 	/* 
 		* Manage commands cooldown
@@ -21,20 +21,20 @@ export class PluginSystem {
 	private _cooldowns: Collection<string, Map<string, number>>
 
 	constructor() {
-		this._commands = new Collection<string, Command>()
+		this._commands = new Collection<string, CommandContext>()
 		this._cooldowns = new Collection<string, Map<string, number>>()
 	}
 
-	get commands(): Collection<string, Command> {
+	get commands(): Collection<string, CommandContext> {
 		return this._commands
 	}
 
 	get groups(): string[] {
-		return [...new Set(this._commands.map((cmd: Command) => cmd.config.group ? cmd.config.group : 'basic'))] as string[]
+		return [...new Set(this._commands.map((cmd: CommandContext) => cmd.config.group ? cmd.config.group : 'basic'))] as string[]
 	}
 
-	getCommand(name: string): Command | null {
-		return this._commands.find((cmd: Command) => cmd.config.name == name) || this._commands.find((cmd: Command) => cmd.config.alias?.includes(name)) || null;
+	getCommand(name: string): CommandContext | null {
+		return this._commands.find((cmd: CommandContext) => cmd.config.name == name) || this._commands.find((cmd: CommandContext) => (cmd.config.alias as string[]).includes(name)) || null;
 	}
 
 	loadCommands() {
@@ -42,6 +42,7 @@ export class PluginSystem {
 		.map(folder => {
 			fs.readdirSync(`src/commands/${folder}`)
 			.forEach(file => {
+				if (file.startsWith('_')) return;
 				if (file.endsWith('.ts')) {
 					const C = require(`./commands/${folder}/${file.slice(0, -3)}`);
 					this.loadCommand(this.checkCommandConfig(new C()))
@@ -50,7 +51,7 @@ export class PluginSystem {
 		})
 	}
 
-	loadCommand<Cmd extends Command>(cmd: Cmd) {
+	loadCommand<Cmd extends CommandContext>(cmd: Cmd) {
 		if (!cmd || !cmd.config && !cmd.run) return;
 
 		this._commands.set(cmd.config.name, cmd)
@@ -63,9 +64,9 @@ export class PluginSystem {
 		}
 	}
 
-	async emitCommand(params: RunArguments) {
-		const { message, user } = params;
-		let command: Command | null = this.getCommand(params.cmd)
+	async emitCommand(args: Arguments) {
+		const { message, user } = args;
+		const command: CommandContext | null = this.getCommand(args.cmd)
 		if (!command) return;
 
 		if (command.config.ownerOnly && message.author.id !== Config.owner) {
@@ -80,8 +81,8 @@ export class PluginSystem {
 
 		// If the bot doesn't have the permissions, it returns an error message.
 		if (command.config.permissions != 'SEND_MESSAGES' && message.channel.type == 'text') {
-			const bot: GuildMember | null = (params.guild as Guild).members.cache.find(member => member.user.bot && member.id == Client.user!.id) || null;
-			if (bot && !bot.hasPermission(command.config.permissions)) {
+			const bot: GuildMember | null = (args.guild as Guild).members.cache.find(member => member.user.bot && member.id == Client.user!.id) || null;
+			if (bot && !bot.hasPermission(command.config.permissions as PermissionResolvable)) {
 				message.channel.send(`No puedo ejecutar ese comando. Me falta el permiso de \`${command.config.permissions}\``)
 				return;
 			}
@@ -108,7 +109,7 @@ export class PluginSystem {
 			await cooldown.set(user.id, Date.now())
 		}
 
-		command.run(params)
+		command.run(args)
 	}
 
 	/**
@@ -116,7 +117,7 @@ export class PluginSystem {
 		* 	Check the unassigned properties of config: CommandConfig
 		* 	and give them a default value.
 	*/
-	private checkCommandConfig<Cmd extends Command>(cmd: Cmd): Cmd {
+	private checkCommandConfig<Cmd extends CommandContext>(cmd: Cmd): Cmd {
 		if (cmd && cmd.config) {
 			if (!cmd.config.desc) cmd.config.desc = ""
 			if (!cmd.config.alias) cmd.config.alias = []
@@ -154,7 +155,7 @@ class MessageHandler {
 		}
 	}
 
-	private getRunArguments(message: Message): RunArguments {
+	private getRunArguments(message: Message): Arguments {
 		const user: User = message.author;
         const guild: Guild | null = (message.guild) ? message.guild : null;
         const targets: string[] = message.content.slice(Config.prefix.length).trim().split(' ');

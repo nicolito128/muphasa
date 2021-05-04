@@ -1,8 +1,8 @@
-import { Command, RunArguments } from './../../lib/command'
+import { Arguments, CommandContext } from './../../lib/command'
 import { Embed } from './../../lib/embed'
 import { Client } from './../../client'
 
-export = class GithubCommand extends Command {
+export = class GithubCommand extends CommandContext {
 	readonly url: string;
 
 	constructor(){
@@ -15,7 +15,7 @@ export = class GithubCommand extends Command {
 		this.url = 'https://github.com/nicolito128/muphasa'
 	}
 
-	run({message, user}: RunArguments) {
+	run({message, user}: Arguments) {
 		message.channel.send(
             Embed.notify({
             	title: 'Github',

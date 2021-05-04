@@ -1,10 +1,10 @@
-import { Command, RunArguments } from './../../lib/command'
+import { CommandContext, Arguments } from './../../lib/command'
 import { Embed } from './../../lib/embed'
 import { toId } from './../../lib/text'
 import { Plugins } from './../../plugins'
 import Config from './../../Config'
 
-export = class HelpCommand extends Command {
+export = class HelpCommand extends CommandContext {
 	constructor(){
 		super({
 			name: 'help',
@@ -13,7 +13,7 @@ export = class HelpCommand extends Command {
 		})
 	}
 
-	run({message, user, targets, guild}: RunArguments) {
+	run({message, user, targets, guild}: Arguments) {
 		if (!targets[0]) {
 			message.channel.send('Ingresa un comando del cual quieras obtener información.')
 			return;
@@ -35,7 +35,7 @@ export = class HelpCommand extends Command {
             `**Uso**: \`${Config.prefix} ${help.name}${(help.usage) ? ' < ' + help.usage + ' > ' : ''}\``,
         ];
 
-        if (help.alias.length >= 1) description.push(`**Alias**: ${help.alias.join(', ')}`);
+        if (help.alias && help.alias.length >= 1) description.push(`**Alias**: ${help.alias.join(', ')}`);
         description.push(`**Descripción**: ${help.desc}`)
 
         const embed = Embed.notify({

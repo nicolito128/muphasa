@@ -16,7 +16,7 @@ export interface CommandConfig {
 
 // An object for the run method in a command.
 // Provides help to create a command.
-export interface RunArguments {
+export interface Arguments {
 	message: Message;
 	user: User;
 	client: CustomClient;
@@ -26,12 +26,12 @@ export interface RunArguments {
 }
 
 // Every command inherits from Command.
-export abstract class Command {
+export abstract class CommandContext {
 	readonly config: CommandConfig
 
 	constructor(config: CommandConfig) {
 		this.config = config
 	}
 
-	run({}: RunArguments): void | Promise<void> {}
+	run({}: Arguments): void | Promise<void> {}
 }

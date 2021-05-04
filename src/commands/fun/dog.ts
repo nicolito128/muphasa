@@ -1,5 +1,5 @@
 import * as superagent from 'superagent'
-import { Command, RunArguments } from './../../lib/command'
+import { CommandContext, Arguments } from './../../lib/command'
 import { Embed } from './../../lib/embed'
 
 interface DogResponse {
@@ -7,7 +7,7 @@ interface DogResponse {
     status: string;
 }
 
-export = class DogCommand extends Command {
+export = class DogCommand extends CommandContext {
     readonly apiURL = 'https://dog.ceo/api/breeds/image/random'
 
 	constructor(){
@@ -20,7 +20,7 @@ export = class DogCommand extends Command {
 		})
 	}
 
-	async run({message, user}: RunArguments) {
+	async run({message, user}: Arguments) {
         try{
             const image = await this.getRandomDog()
             const embed = Embed.notify({title: 'Dog!', desc: ''})

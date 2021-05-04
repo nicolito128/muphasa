@@ -1,8 +1,8 @@
-import { Command, RunArguments } from './../../lib/command'
+import { CommandContext, Arguments } from './../../lib/command'
 import { Embed } from './../../lib/embed'
 import { Client } from './../../client'
 
-export = class InviteCommand extends Command {
+export = class InviteCommand extends CommandContext {
 	constructor(){
 		super({
 			name: 'invite',
@@ -11,7 +11,7 @@ export = class InviteCommand extends Command {
 		})
 	}
 
-	run({message}: RunArguments) {
+	run({message}: Arguments) {
 		const embed = Embed.notify({title: '¡Invitame a tu servidor!', desc: ''})
         .setDescription([
             '¡Hola! soy **' + Client.user?.username + '**, un bot multi propocitos con diversas herramienta para mejorar tu servidor.',

@@ -1,11 +1,11 @@
-import { Command, RunArguments } from './../../lib/command'
+import { CommandContext, Arguments } from './../../lib/command'
 import { Embed } from './../../lib/embed'
 import { Plugins } from './../../plugins'
 import Config from './../../Config'
 
 const prefix = Config.prefix;
 
-export = class GroupCommand extends Command {
+export = class GroupCommand extends CommandContext {
 	constructor(){
 		super({
 			name: 'group',
@@ -13,7 +13,7 @@ export = class GroupCommand extends Command {
 		})
 	}
 
-	run({message, user, targets, guild}: RunArguments) {
+	run({message, user, targets, guild}: Arguments) {
         const groupList = Plugins.groups
         const embedInvalid = Embed.notify({
             title: 'Categorías de comandos',

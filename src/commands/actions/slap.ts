@@ -1,9 +1,9 @@
 import { User } from 'discord.js'
-import { Command, RunArguments } from './../../lib/command'
+import { CommandContext, Arguments } from './../../lib/command'
 import { Embed } from './../../lib/embed'
 import Searcher from './../../lib/giphy'
 
-export = class HugCommand extends Command {
+export = class HugCommand extends CommandContext {
 	readonly slaps: Searcher;
 	readonly phrases: string[];
 
@@ -25,7 +25,7 @@ export = class HugCommand extends Command {
 		]
 	}
 
-	async run({message, client, user}: RunArguments) {
+	async run({message, client, user}: Arguments) {
 		if (!message.mentions.users.first()) {
 			message.channel.send('Necesito que menciones a un usuario.')
 			return;

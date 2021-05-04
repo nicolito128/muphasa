@@ -1,8 +1,8 @@
-import { Command, RunArguments } from './../../lib/command'
+import { CommandContext, Arguments } from './../../lib/command'
 import { Guild } from 'discord.js'
 import { Embed } from './../../lib/embed'
 
-export = class ServerCommand extends Command {
+export = class ServerCommand extends CommandContext {
 	readonly regions: {[c: string]: string};
 
 	constructor(){
@@ -33,7 +33,7 @@ export = class ServerCommand extends Command {
 		};
 	}
 
-	run({message}: RunArguments) {
+	run({message}: Arguments) {
 		const guild = message.guild as Guild;
 
 		const status = {

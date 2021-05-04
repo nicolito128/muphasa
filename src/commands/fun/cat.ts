@@ -1,12 +1,12 @@
 import * as superagent from 'superagent'
-import { Command, RunArguments } from './../../lib/command'
+import { CommandContext, Arguments } from './../../lib/command'
 import { Embed } from './../../lib/embed'
 
 interface CatResponse {
     file: string
 }
 
-export = class CatCommand extends Command {
+export = class CatCommand extends CommandContext {
     readonly apiURL = 'https://aws.random.cat/meow'
 
 	constructor(){
@@ -19,7 +19,7 @@ export = class CatCommand extends Command {
 		})
 	}
 
-	async run({message, user}: RunArguments) {
+	async run({message, user}: Arguments) {
         try{
             const image = await this.getRandomCat()
             const embed = Embed.notify({title: 'Cat!', desc: ''})

@@ -1,19 +1,18 @@
-import { Command, RunArguments } from './../../lib/command'
-import { Embed } from './../../lib/embed'
-import Config from './../../Config'
+import { CommandContext, Arguments } from './../../lib/command'
 
-export = class EvalCommand extends Command {
+export = class EvalCommand extends CommandContext {
 	constructor() {
 		super({
 			name: 'eval',
 			desc: 'Evalua código JavaScript y luego muestra el resultado.',
 			group: 'admin',
 			usage: 'code',
+			alias: [],
 			ownerOnly: true
 		})
 	}
 
-	run({message, user, targets}: RunArguments) {
+	run({message, user, targets}: Arguments) {
         const code: string = targets.join(' ')
         if (!code) {
         	message.channel.send('Ingresa código que poder evaluar.')

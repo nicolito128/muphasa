@@ -1,9 +1,9 @@
 import { Guild, GuildMember, ClientUser } from 'discord.js'
-import { Command, RunArguments } from './../../lib/command'
-import { muteMember } from './../../lib/moderation'
+import { CommandContext, Arguments } from './../../lib/command'
+import { muteMember } from './_utils'
 import { Embed } from './../../lib/embed'
 
-export = class MuteCommand extends Command {
+export = class MuteCommand extends CommandContext {
 	constructor() {
 		super({
 			name: 'mute',
@@ -15,7 +15,7 @@ export = class MuteCommand extends Command {
 		})
 	}
 
-	run({message, guild, client, targets}: RunArguments) {
+	run({message, guild, client, targets}: Arguments) {
 		const Guild = guild as Guild
 
         if (message.member && !message.member.hasPermission('MANAGE_ROLES')) {
