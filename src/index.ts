@@ -6,11 +6,24 @@
  * 
 */
 
-// Check for version
+// Check for version and dependecies
 try {
-	RegExp("\\p{Emoji}", "u");
+	[].flatMap(x => x);
 } catch (e) {
-	throw new Error("We require Node.js version 10 or later; you're using " + process.version);
+	throw new Error("We require Node.js version 12 or later; you're using " + process.version);
+}
+
+try {
+	const sucraseVersion = require('sucrase').getVersion().split('.');
+	if (
+		parseInt(sucraseVersion[0]) < 3 ||
+		(parseInt(sucraseVersion[0]) === 3 && parseInt(sucraseVersion[1]) < 15)
+	)
+	{
+		throw new Error("Sucrase version too old");
+	}
+} catch (e) {
+	throw new Error("Dependencies are unmet; run `node build`.");
 }
 
 /** Globals **/
