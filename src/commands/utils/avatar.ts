@@ -1,7 +1,7 @@
-import { Command, RunArguments } from './../../lib/command'
+import { CommandContext, Arguments } from './../../lib/command'
 import { Embed } from './../../lib/embed'
 
-export = class AvatarCommand extends Command {
+export = class AvatarCommand extends CommandContext {
 
 	constructor(){
 		super({
@@ -14,7 +14,7 @@ export = class AvatarCommand extends Command {
 
 	}
 
-	run({message, user}: RunArguments) {
+	run({message, user}: Arguments) {
 		const targetUser = message.mentions.users.first() || user;
         const avatar = targetUser.displayAvatarURL({dynamic: true, size: 1024, format: 'png' || 'gif'});
         const embed = Embed.notify({

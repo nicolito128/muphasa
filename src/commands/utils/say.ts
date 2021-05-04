@@ -1,7 +1,7 @@
-import { Command, RunArguments } from './../../lib/command'
+import { CommandContext, Arguments } from './../../lib/command'
 import { Embed } from './../../lib/embed'
 
-export = class SayCommand extends Command {
+export = class SayCommand extends CommandContext {
 
 	constructor(){
 		super({
@@ -13,7 +13,7 @@ export = class SayCommand extends Command {
 
 	}
 
-	run({message, targets}: RunArguments) {
+	run({message, targets}: Arguments) {
 		const msg: string = targets.join(' ').trim()
         if (!msg) {
         	message.channel.send('Debes ingresar un texto para que repita.')

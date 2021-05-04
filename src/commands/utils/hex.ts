@@ -1,10 +1,10 @@
-import { Command, RunArguments } from './../../lib/command'
+import { CommandContext, Arguments } from './../../lib/command'
 import { Embed } from './../../lib/embed'
 import { toId } from './../../lib/text'
 
 type RGB = {r: number, g: number, b: number}
 
-export = class HexCommand extends Command {
+export = class HexCommand extends CommandContext {
 	readonly colorAlias: {[k: string]: string}
 
 	constructor(){
@@ -43,7 +43,7 @@ export = class HexCommand extends Command {
 		}
 	}
 
-	run({message, targets, guild}: RunArguments) {
+	run({message, targets, guild}: Arguments) {
         let hex: string = '';
         let rgb: RGB = Object.create(null);
         let rgbInEmbed: string = '';
