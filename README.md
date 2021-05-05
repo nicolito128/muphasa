@@ -1,6 +1,7 @@
 # Muphasa
 ![Build Status](https://github.com/nicolito128/muphasa/workflows/Node.js%20CI/badge.svg)
 ![Dependency Status](https://status.david-dm.org/gh/nicolito128/muphasa.svg)
+![devDependency Status](https://status.david-dm.org/gh/nicolito128/muphasa.svg?type=dev)
 
 ## Introduction
 Muphasa is a **discord-bot** written in Typescript. It includes several commands, but we are at an early development stage.
