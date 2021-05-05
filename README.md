@@ -1,5 +1,32 @@
-# Type Muphasa
+# Muphasa
+![Dependency Status](https://status.david-dm.org/gh/nicolito128/muphasa.svg)
 
-Basado en [muphasa-bot][1]
+## Introduction
+Muphasa is a **discord-bot** written in Typescript. It includes several commands, but we are at an early development stage.
+
+## Deploy
+Clone project:
+    
+    git clone https://github.com/nicolito128/muphasa
+
+Install dependencies:
+
+    npm install --production
+
+Set environment variable (Powershell):
+
+    $env:BOT_TOKEN = "your discord bot token"
+    $env:BOT_OWNER = "your discord tag"
+
+In case you use commands that require Giphy, you need to set a **GIPHY_API_KEY**.
+
+Run:
+
+    npm start
+    
+When everything is configured you can initialize the bot. We recommend using **npm start** to ensure a successful compilation and running.
+
+------------------------------------------------------------------------
+Based on [muphasa-bot][1]
 
 [1]: https://github.com/nicolito128/Muphasa-bot
