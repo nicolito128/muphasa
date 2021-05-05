@@ -34,7 +34,11 @@ export class PluginSystem {
 	}
 
 	getCommand(name: string): CommandContext | null {
-		return this._commands.find((cmd: CommandContext) => cmd.config.name == name) || this._commands.find((cmd: CommandContext) => (cmd.config.alias as string[]).includes(name)) || null;
+		return this._commands.find(
+			(cmd: CommandContext) => cmd.config.name == name
+		) || this._commands.find(
+			(cmd: CommandContext) => (cmd.config.alias as string[]).includes(name)
+		) || null;
 	}
 
 	loadCommands() {
@@ -42,10 +46,12 @@ export class PluginSystem {
 		.map(folder => {
 			fs.readdirSync(`src/commands/${folder}`)
 			.forEach(file => {
+				// No-command file
 				if (file.startsWith('_')) return;
+
 				if (file.endsWith('.ts')) {
-					const C = require(`./commands/${folder}/${file.slice(0, -3)}`);
-					this.loadCommand(this.checkCommandConfig(new C()))
+					const Command = require(`./commands/${folder}/${file.slice(0, -3)}`);
+					this.loadCommand(this.checkCommandConfig(new Command()))
 				}
 			})
 		})
