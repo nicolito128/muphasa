@@ -1,4 +1,5 @@
 # Muphasa
+![Build Status](https://github.com/nicolito128/muphasa/workflows/Node.js%20CI/badge.svg)
 ![Dependency Status](https://status.david-dm.org/gh/nicolito128/muphasa.svg)
 
 ## Introduction
