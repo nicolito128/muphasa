@@ -12,11 +12,11 @@
         "email": "nicolito128@hotmail.com"
     },
     "dependencies": {
-        "@types/node": "^14.11.2",
+        "@types/node": "^15.0.2",
         "@types/superagent": "^4.1.11",
         "discord.js": "^12.5.3",
         "sucrase": "^3.18.1",
-        "superagent": "^5.3.1"
+        "superagent": "^6.1.0"
     },
     "url": "https://github.com/nicolito128/muphasa",
     "license": "MIT"
