@@ -55,20 +55,25 @@ export = class HexCommand extends CommandContext {
         }
 
         if (targets[0].includes('alias') || targets[0].includes('colors') || targets[0].includes('colorlist')) {
-            const embed = Embed.notify({title: 'Color List', desc: `\`${Object.keys(this.colorAlias).join(' - ')}\``});
+            const embed = Embed.notify({
+				title: 'Color List',
+				desc: `\`${Object.keys(this.colorAlias).join(' - ')}\``
+			});
+
             message.channel.send(embed);
             return;
         }
 
         const targetsParsed: number[] = targets.map(target => parseInt(target))
 
+		// validate RGB
         if (targetsParsed.length > 1 && targetsParsed.length < 3) {
             message.channel.send(`Si ingresas un valor RGB debes pasar 3 parametros.`);
             return;
-        } else if (targetsParsed.length == 3) {
+        } else if (targetsParsed.length === 3) {
+			// it's necessary to validate that usable values were entered to convert to a color.
             targetsParsed.forEach(target => {
-                if (isNaN(target))
-                {
+                if (isNaN(target)) {
                     message.channel.send('Si ingresas valores RGB todos los parametros deben ser números.');
                     return;
                 }
@@ -76,11 +81,22 @@ export = class HexCommand extends CommandContext {
 
             hex = this.rgbToHex(targetsParsed[0], targetsParsed[1], targetsParsed[2]);
             rgbInEmbed = `${targetsParsed[0]} ${targetsParsed[1]} ${targetsParsed[2]}`;
-        } else if (this.colorAlias.hasOwnProperty(toId(targets[0]))) {
-            hex = this.colorAlias[targets[0]];
-        } else {
-            hex = targets[0].startsWith('#') ? targets[0].substring(1) : targets[0];
         }
+		
+		// validate color alias
+		if (this.colorAlias.hasOwnProperty(toId(targets[0]))) hex = this.colorAlias[targets[0]];
+
+		// validate hex
+		if (targets[0].startsWith('#') && targets[0].length === 4) {
+			// remove the "#" and repeat values to form a valid string
+			hex = targets[0].substring(1) + targets[0].substring(1);
+
+        } else if (!targets[0].startsWith('#') && targets[0].length === 3) {
+			// Does not include '#', so repeat values to form a valid string
+			hex = targets[0] + targets[0];
+		} else {
+			hex = targets[0];
+		}
 
         image += `${hex}/${hex}`;
         rgb = this.hexToRgb(hex.toString());
