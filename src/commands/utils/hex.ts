@@ -1,6 +1,7 @@
 import { CommandContext, Arguments } from './../../lib/command'
 import { Embed } from './../../lib/embed'
-import { toId } from './../../lib/text'
+import Text from './../../lib/text'
+const toId = Text.toId;
 
 type RGB = {r: number, g: number, b: number}
 
@@ -54,7 +55,11 @@ export = class HexCommand extends CommandContext {
             return;
         }
 
-        if (targets[0].includes('alias') || targets[0].includes('colors') || targets[0].includes('colorlist')) {
+        if ( 
+			targets[0] === 'alias' ||
+			targets[0] === 'colors' ||
+			targets[0] === 'colorlist'
+		) {
             const embed = Embed.notify({
 				title: 'Color List',
 				desc: `\`${Object.keys(this.colorAlias).join(' - ')}\``
@@ -67,10 +72,13 @@ export = class HexCommand extends CommandContext {
         const targetsParsed: number[] = targets.map(target => parseInt(target))
 
 		// validate RGB
-        if (targetsParsed.length > 1 && targetsParsed.length < 3) {
+        if ( 
+			targetsParsed.length > 1 &&
+			targetsParsed.length < 3
+		) {
             message.channel.send(`Si ingresas un valor RGB debes pasar 3 parametros.`);
             return;
-        } else if (targetsParsed.length === 3) {
+        } else if ( targetsParsed.length === 3 ) {
 			// it's necessary to validate that usable values were entered to convert to a color.
             targetsParsed.forEach(target => {
                 if (isNaN(target)) {
@@ -84,10 +92,9 @@ export = class HexCommand extends CommandContext {
         }
 		
 		// validate color alias
-		if (this.colorAlias.hasOwnProperty(toId(targets[0]))) hex = this.colorAlias[targets[0]];
+		if ( this.colorAlias.hasOwnProperty( toId(targets[0]) ) ) hex = this.colorAlias[targets[0]];
 
 		// validate hex
-
 		if (targets[0].startsWith('#')) {
 			if (targets[0].length === 4) {
 				// remove the "#" and repeat values to form a valid string
