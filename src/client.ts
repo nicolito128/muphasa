@@ -5,6 +5,7 @@ import { Plugins, PluginSystem, MessageManager } from './plugins'
 export class CustomClient extends Discord.Client {
     readonly user: Discord.ClientUser | null;
     readonly plugins: PluginSystem;
+    readonly startedAt: Date;
 
     constructor(plugins: PluginSystem) {
         super({
@@ -13,6 +14,7 @@ export class CustomClient extends Discord.Client {
 
         this.user = super.user
         this.plugins = plugins
+        this.startedAt = new Date()
 
         this.once("ready", () => {
             void (this.user as Discord.ClientUser).setActivity(`Prefix: ${Config.prefix}`)
