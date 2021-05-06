@@ -1,6 +1,7 @@
 import { CommandContext, Arguments } from './../../lib/command'
+import { Client } from './../../client'
 
-export = class EvalCommand extends CommandContext {
+export = class StartedAt extends CommandContext {
 	constructor() {
 		super({
 			name: 'startedtat',
@@ -14,6 +15,6 @@ export = class EvalCommand extends CommandContext {
 
 	run({message, user, targets}: Arguments) {
         message.channel.send('Tiempo en el que empezó a funcionar mi sistema:')
-		message.channel.send(global.Client.startedAt, {code: 'javascript'})
+		message.channel.send(Client.startedAt, {code: 'javascript'})
 	}
 }
