@@ -87,15 +87,21 @@ export = class HexCommand extends CommandContext {
 		if (this.colorAlias.hasOwnProperty(toId(targets[0]))) hex = this.colorAlias[targets[0]];
 
 		// validate hex
-		if (targets[0].startsWith('#') && targets[0].length === 4) {
-			// remove the "#" and repeat values to form a valid string
-			hex = targets[0].substring(1) + targets[0].substring(1);
 
-        } else if (!targets[0].startsWith('#') && targets[0].length === 3) {
-			// Does not include '#', so repeat values to form a valid string
-			hex = targets[0] + targets[0];
+		if (targets[0].startsWith('#')) {
+			if (targets[0].length === 4) {
+				// remove the "#" and repeat values to form a valid string
+				hex = targets[0].substring(1) + targets[0].substring(1);
+			}
+
+			hex = targets[0].substring(1)
 		} else {
-			hex = targets[0];
+			// Does not include '#', so repeat values to form a valid string
+			if (targets[0].length === 3) {
+				hex = targets[0] + targets[0]
+			}
+
+			hex = targets[0]
 		}
 
         image += `${hex}/${hex}`;
@@ -116,7 +122,8 @@ export = class HexCommand extends CommandContext {
 	}
 
 	private getHexValue(n: number): string {
-		return Number(n).toString(16);
+		const hexValue: string = Number(n).toString(16)
+		return hexValue;
 	}
 
 	private rgbToHex(r: number, g: number, b: number): string {
@@ -124,7 +131,10 @@ export = class HexCommand extends CommandContext {
 	}
 
  	private hexToRgb(hex: string): RGB {
-    	const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex) || ['0', '0', '0'];
+		let str = hex;
+		if (hex.length > 6) str = hex.substring(0, 7);
+
+    	const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(str) || ['0', '0', '0'];
     	return {
       		r: parseInt(result[1], 16),
       		g: parseInt(result[2], 16),
