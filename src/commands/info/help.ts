@@ -1,8 +1,10 @@
 import { CommandContext, Arguments } from './../../lib/command'
 import { Embed } from './../../lib/embed'
-import { toId } from './../../lib/text'
 import { Plugins } from './../../plugins'
 import Config from './../../Config'
+
+import Text from './../../lib/text'
+const toId = Text.toId;
 
 export = class HelpCommand extends CommandContext {
 	constructor(){
