@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 import { Message, Guild, User, Collection, GuildMember, PermissionResolvable } from 'discord.js'
 import { CommandContext, Arguments } from './lib/command'
-import { Client } from './client'
+import { App } from './client'
 import Config from './Config'
 
 /**
@@ -87,7 +87,7 @@ export class PluginSystem {
 
 		// If the bot doesn't have the permissions, it returns an error message.
 		if (command.config.permissions != 'SEND_MESSAGES' && message.channel.type == 'text') {
-			const bot: GuildMember | null = (args.guild as Guild).members.cache.find(member => member.user.bot && member.id == Client.user!.id) || null;
+			const bot: GuildMember | null = (args.guild as Guild).members.cache.find(member => member.user.bot && member.id === App.user!.id) || null;
 			if (bot && !bot.hasPermission(command.config.permissions as PermissionResolvable)) {
 				message.channel.send(`No puedo ejecutar ese comando. Me falta el permiso de \`${command.config.permissions}\``)
 				return;
@@ -110,7 +110,7 @@ export class PluginSystem {
 			}
 
 			// Clear cooldown after a while
-			await Client.setTimeout(() => cooldown.delete(user.id), command.config.cooldown * 1000)
+			await App.setTimeout(() => cooldown.delete(user.id), command.config.cooldown * 1000)
 			// Set the user timestamp
 			await cooldown.set(user.id, Date.now())
 		}
@@ -155,7 +155,12 @@ class MessageHandler {
 	eval(message: Message) {
 		if (message.author.bot) return;
 
-		if (message.content.toLowerCase().trim().startsWith(Config.prefix)) {
+		if (
+			message.content
+			.toLowerCase()
+			.trim()
+			.substring(0, Config.prefix.length) === Config.prefix
+		) {
 			const params = this.getRunArguments(message)
 			this.plugins.emitCommand(params)
 		}
@@ -166,7 +171,7 @@ class MessageHandler {
         const guild: Guild | null = (message.guild) ? message.guild : null;
         const targets: string[] = message.content.slice(Config.prefix.length).trim().split(' ');
         const cmd: string = targets?.shift()?.toLowerCase() || "";
-        const client = Client;
+        const client = App;
 
         return {message, client, user, guild, targets, cmd}
 	}
