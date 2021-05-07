@@ -1,5 +1,4 @@
 import { CommandContext, Arguments } from './../../lib/command'
-import { App } from './../../client'
 import { Embed } from './../../lib/embed'
 
 export = class PingCommand extends CommandContext {
@@ -11,13 +10,13 @@ export = class PingCommand extends CommandContext {
 		})
 	}
 
-	run({message}: Arguments) {
+	run({message, client}: Arguments) {
         message.channel.send('**:ping_pong: Ping!**').then(msg => {
             msg.edit(Embed.notify({
                 title: ':ping_pong: Pong!',
                 desc: [
                 `Latency: ${msg.createdTimestamp - message.createdTimestamp}ms`,
-                `API Latency ${Math.round(App.ws.ping)}ms`
+                `API Latency ${Math.round(client.ws.ping)}ms`
                 ]
             }))
         })
