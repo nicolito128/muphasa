@@ -30,7 +30,12 @@ export class PluginSystem {
 	}
 
 	get groups(): string[] {
-		return [...new Set(this._commands.map((cmd: CommandContext) => cmd.config.group ? cmd.config.group : 'basic'))] as string[]
+		return [
+			...new Set(
+				this._commands.map(
+					(cmd: CommandContext) => cmd.config.group ? cmd.config.group : 'basic')
+				)
+			] as string[]
 	}
 
 	getCommand(name: string): CommandContext | null {
