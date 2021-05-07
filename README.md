@@ -19,6 +19,7 @@ Set environment variable (Powershell):
 
     $env:BOT_TOKEN = "your discord bot token"
     $env:BOT_OWNER = "your discord tag"
+    $env:BOT_PREFIX = "$coolprefix"
 
 In case you use commands that require Giphy, you need to set a **GIPHY_API_KEY**.
 
