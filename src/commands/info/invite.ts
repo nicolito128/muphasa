@@ -1,5 +1,6 @@
 import { CommandContext, Arguments } from './../../lib/command'
 import { Embed } from './../../lib/embed'
+import { App } from './../../client'
 
 export = class InviteCommand extends CommandContext {
     readonly inviteURL: string;
@@ -12,7 +13,7 @@ export = class InviteCommand extends CommandContext {
 		})
 
         this.inviteURL = 'https://discord.com/oauth2/authorize?client_id=551826544453222418&scope=bot&permissions=1543896183'
-	}
+    }
 
 	run({message, client}: Arguments) {
 		const embed = Embed.notify({title: '¡Invitame a tu servidor!', desc: ''})
@@ -25,8 +26,17 @@ export = class InviteCommand extends CommandContext {
         .setColor('#4169E1')
         .setThumbnail(client.user?.avatarURL() || "")
         .addField('Funciono en', `${client.guilds.cache.size} servidores`, true)
-        .addField('Ayudo a', `${client.users.cache.size} usuarios`, true)
+        .addField('Ayudo a', `${this.calcUsersHelped} usuarios`, true)
 
         message.channel.send(embed)
 	}
+
+    get calcUsersHelped() {
+        let size: number = 0;
+        App.guilds.cache.each((guild) => {
+            size += guild.memberCount
+        })
+
+        return size;
+    }
 }
