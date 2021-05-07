@@ -26,16 +26,11 @@ try {
 	throw new Error("Dependencies are unmet; run `node build`.");
 }
 
-/** Globals **/
-declare const global: any;
-
-import { Client } from './client'
-global.Client = Client;
-
+import { App } from './client'
 import { Plugins } from './plugins'
-global.Plugins = Plugins
 
+/** Plugins **/
 Plugins.loadCommands()
 
 // Run
-Client.connect()
+App.connect()
