@@ -26,12 +26,12 @@ export = class InviteCommand extends CommandContext {
         .setColor('#4169E1')
         .setThumbnail(client.user?.avatarURL() || "")
         .addField('Funciono en', `${client.guilds.cache.size} servidores`, true)
-        .addField('Ayudo a', `${this.calcUsersHelped} usuarios`, true)
+        .addField('Ayudo a', `${this.usersHelped} usuarios`, true)
 
         message.channel.send(embed)
 	}
 
-    get calcUsersHelped() {
+    get usersHelped() {
         let size: number = 0;
         App.guilds.cache.each((guild) => {
             size += guild.memberCount
