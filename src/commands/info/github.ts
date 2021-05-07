@@ -1,6 +1,6 @@
 import { Arguments, CommandContext } from './../../lib/command'
 import { Embed } from './../../lib/embed'
-import { Client } from './../../client'
+import { App } from './../../client'
 
 export = class GithubCommand extends CommandContext {
 	readonly url: string;
@@ -19,7 +19,7 @@ export = class GithubCommand extends CommandContext {
 		message.channel.send(
             Embed.notify({
             	title: 'Github',
-                desc: `¡Hola, ${user}! Soy **${Client.user?.username}**. Todavía me encuentro en fase de pruebas, ¡Pero no dudes en contar conmigo como tu BOT de confianza!`,
+                desc: `¡Hola, ${user}! Soy **${App.user?.username}**. Todavía me encuentro en fase de pruebas, ¡Pero no dudes en contar conmigo como tu BOT de confianza!`,
                 color: [68, 197, 76]
             }).setURL(this.url)
         )

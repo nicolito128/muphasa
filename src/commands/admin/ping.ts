@@ -1,5 +1,5 @@
 import { CommandContext, Arguments } from './../../lib/command'
-import { Client } from './../../client'
+import { App } from './../../client'
 import { Embed } from './../../lib/embed'
 
 export = class PingCommand extends CommandContext {
@@ -17,7 +17,7 @@ export = class PingCommand extends CommandContext {
                 title: ':ping_pong: Pong!',
                 desc: [
                 `Latency: ${msg.createdTimestamp - message.createdTimestamp}ms`,
-                `API Latency ${Math.round(Client.ws.ping)}ms`
+                `API Latency ${Math.round(App.ws.ping)}ms`
                 ]
             }))
         })
