@@ -1,23 +1,21 @@
-import * as Discord from 'discord.js'
-import Config from './Config'
 import { Plugins, PluginSystem, MessageManager } from './plugins'
+import { Client, ClientUser, ClientOptions} from 'discord.js'
+import Config from './Config'
 
-export class CustomClient extends Discord.Client {
-    readonly user: Discord.ClientUser | null;
+export class CustomClient extends Client {
+    readonly user: ClientUser | null;
     readonly plugins: PluginSystem;
     readonly startedAt: Date;
 
-    constructor(plugins: PluginSystem) {
-        super({
-            restTimeOffset: 1000
-        })
+    constructor(plugins: PluginSystem, options: ClientOptions) {
+        super(options)
 
-        this.user = super.user
-        this.plugins = plugins
-        this.startedAt = new Date()
+        this.user = super.user;
+        this.plugins = plugins;
+        this.startedAt = new Date();
 
         this.once("ready", () => {
-            void (this.user as Discord.ClientUser).setActivity(`Prefix: ${Config.prefix}`)
+            void (this.user as ClientUser).setActivity(`Prefix: ${Config.prefix}`)
             this.on("disconnect", () => console.log(`The bot has been disconnected.`))
         })
 
@@ -41,4 +39,4 @@ export class CustomClient extends Discord.Client {
     }
 }
 
-export const Client = new CustomClient(Plugins)
+export const App = new CustomClient(Plugins, { restTimeOffset: 1000 })
