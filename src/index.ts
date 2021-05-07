@@ -26,8 +26,14 @@ try {
 	throw new Error("Dependencies are unmet; run `node build`.");
 }
 
-import { App } from './client'
 import { Plugins } from './plugins'
+import { App } from './client'
+import Config from './Config'
+
+/** Globals  **/
+global.Client = App
+global.Plugins = Plugins
+global.Config = Config
 
 /** Plugins **/
 Plugins.loadCommands()
