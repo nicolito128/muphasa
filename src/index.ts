@@ -26,11 +26,15 @@ try {
 	throw new Error("Dependencies are unmet; run `node build`.");
 }
 
+
+
 import { Plugins } from './plugins'
 import { App } from './client'
 import Config from './Config'
 
 /** Globals  **/
+declare const global: any;
+
 global.Client = App
 global.Plugins = Plugins
 global.Config = Config
