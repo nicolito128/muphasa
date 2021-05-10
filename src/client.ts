@@ -1,16 +1,18 @@
 import { Client, ClientUser, ClientOptions} from 'discord.js'
-import { PluginSystem, MessageManager } from './plugins'
+import { Plugins, PluginSystem, MessageManager } from './plugins'
 import Config from './Config'
 
 export class CustomClient extends Client {
     readonly user: ClientUser | null;
     readonly startedAt: Date;
+    plugins: PluginSystem;
 
     constructor(options: ClientOptions) {
         super(options)
 
         this.user = super.user;
         this.startedAt = new Date();
+        this.plugins = Plugins;
 
         this.once("ready", () => {
             void (this.user as ClientUser).setActivity(`Prefix: ${Config.prefix}`)
@@ -27,12 +29,8 @@ export class CustomClient extends Client {
         })
     }
 
-    set plugins(o: PluginSystem) {
+    setPlugins(o: PluginSystem) {
         this.plugins = o;
-    }
-
-    get plugins(): PluginSystem {
-        return this.plugins;
     }
 
     connect() {
