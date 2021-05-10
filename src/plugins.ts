@@ -27,8 +27,14 @@ export class PluginSystem {
 		return this.loader.cooldowns;
 	}
 
+	/** All groupings or listings in which the commands are classified. */
 	get groups(): string[] {
-		return this.loader.groups;
+		return [
+			...new Set(
+				this.commands.map(
+					(cmd: CommandContext) => cmd.config.group ? cmd.config.group : 'basic')
+				)
+			] as string[]
 	}
 
 	getCommand(name: string): CommandContext | null {
@@ -144,16 +150,6 @@ class PluginLoader {
 	constructor() {
 		this.commands = new Collection<string, CommandContext>()
 		this.cooldowns = new Collection<string, Map<string, number>>()
-	}
-
-	/** All groupings or listings in which the commands are classified. */
-	get groups(): string[] {
-		return [
-			...new Set(
-				this.commands.map(
-					(cmd: CommandContext) => cmd.config.group ? cmd.config.group : 'basic')
-				)
-			] as string[]
 	}
 
 	loadCommands() {
