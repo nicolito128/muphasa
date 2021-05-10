@@ -1,20 +1,20 @@
 import { CommandContext, Arguments } from './../../lib/command'
+import { Plugins } from './../../plugins'
 import { Embed } from './../../lib/embed'
 import Config from './../../Config'
 
 const prefix = Config.prefix;
 
-export = class GroupCommand extends CommandContext {
+export = class CategoryCommand extends CommandContext {
 	constructor(){
 		super({
 			name: 'category',
-            alias: ['categories'],
-            category: 'info'
+            alias: ['categories']
 		})
 	}
 
-	run({message, targets, client}: Arguments) {
-        const categories = client.plugins.categories
+	run({message, targets}: Arguments) {
+        const categories = Plugins.categories
         const embedInvalid = Embed.notify({
             title: 'Categorías de comandos',
             desc: `Consulta las lista de comandos usando **${prefix} category** *category name*\n\n \`${categories.join(' - ')}\``
@@ -33,7 +33,7 @@ export = class GroupCommand extends CommandContext {
 
         const categoryOfCommands: string[] = [
             ...new Set<string>(
-                client.plugins.commands.map(
+                Plugins.commands.map(
                     cmd => cmd.config.category === category ? cmd.config.name : " "
                 )
             )
