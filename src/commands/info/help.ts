@@ -17,7 +17,7 @@ export = class HelpCommand extends CommandContext {
 
 	run({message, targets}: Arguments) {
 		if (!targets[0]) {
-			message.channel.send('Ingresa un comando del cual quieras obtener información, o revisa la lista de comandos disponibles utilizando `' + Config.prefix +' categories`')
+			message.channel.send('Ingresa un comando del cual quieras obtener información, o revisa la lista de comandos disponibles utilizando `' + Config.prefix +' category`')
 			return;
 		}
 

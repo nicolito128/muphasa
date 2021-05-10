@@ -9,7 +9,6 @@ export = class CategoryCommand extends CommandContext {
 	constructor(){
 		super({
 			name: 'category',
-            alias: ['categories']
 		})
 	}
 
