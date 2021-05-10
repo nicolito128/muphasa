@@ -39,6 +39,7 @@ global.Config = Config
 
 /** Plugins **/
 Plugins.loader.loadCommands()
+App.plugins = Plugins
 
 // Run
 App.connect()

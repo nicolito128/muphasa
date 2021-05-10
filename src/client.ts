@@ -1,17 +1,15 @@
-import { Plugins, PluginSystem, MessageManager } from './plugins'
 import { Client, ClientUser, ClientOptions} from 'discord.js'
+import { PluginSystem, MessageManager } from './plugins'
 import Config from './Config'
 
 export class CustomClient extends Client {
     readonly user: ClientUser | null;
-    readonly plugins: PluginSystem;
     readonly startedAt: Date;
 
-    constructor(plugins: PluginSystem, options: ClientOptions) {
+    constructor(options: ClientOptions) {
         super(options)
 
         this.user = super.user;
-        this.plugins = plugins;
         this.startedAt = new Date();
 
         this.once("ready", () => {
@@ -29,6 +27,14 @@ export class CustomClient extends Client {
         })
     }
 
+    set plugins(o: PluginSystem) {
+        this.plugins = o;
+    }
+
+    get plugins(): PluginSystem {
+        return this.plugins;
+    }
+
     connect() {
         console.log(`Login in progress...`)
         this.login(Config.token)
@@ -39,4 +45,4 @@ export class CustomClient extends Client {
     }
 }
 
-export const App = new CustomClient(Plugins, { restTimeOffset: 1000 })
+export const App = new CustomClient({ restTimeOffset: 1000 })
