@@ -75,6 +75,16 @@ export class PluginSystem {
 			return;
 		}
 
+		// Sends an error when it is not possible to access the server information.
+		if (
+			message.channel.type === 'text' &&
+			!message.guild?.available &&
+			command.config.guildOnly
+		) {
+			message.channel.send('No es posible acceder a información del servidor para efectuar el comando.')
+			return;
+		}
+
 		// If the bot doesn't have the permissions, it returns an error message.
 		if (!this.hasPermission({command, message, args})) return;
 		if (this.cooldownAlreadyExists({command, message, user})) {
