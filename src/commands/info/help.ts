@@ -1,4 +1,5 @@
 import { CommandContext, Arguments } from './../../lib/command'
+import { Plugins } from './../../plugins'
 import { Embed } from './../../lib/embed'
 import Config from './../../Config'
 
@@ -14,25 +15,22 @@ export = class HelpCommand extends CommandContext {
 		})
 	}
 
-	run({message, targets, guild, client}: Arguments) {
+	run({message, targets}: Arguments) {
 		if (!targets[0]) {
 			message.channel.send('Ingresa un comando del cual quieras obtener información, o revisa la lista de comandos disponibles utilizando `' + Config.prefix +' categories`')
 			return;
 		}
 
         const target: string = toId(targets.join());
-        const help = client.plugins.commands.find(cmd => cmd.config.name == target)?.config;
-        let id: string = "";
+        const help = Plugins.commands.find(cmd => cmd.config.name == target)?.config;
 
         if (!help) {
         	message.channel.send('No hay ayuda disponible sobre este comando o no existe.')
         	return;
         }
 
-        if (guild) id = guild.id;
-
         const description = [
-            `**Grupo**: ${help.category}`,
+            `**Categoría**: ${help.category}`,
             `**Uso**: \`${Config.prefix} ${help.name}${(help.usage) ? ' < ' + help.usage + ' > ' : ''}\``,
         ];
 
