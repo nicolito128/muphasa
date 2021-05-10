@@ -27,12 +27,12 @@ export class PluginSystem {
 		return this.loader.cooldowns;
 	}
 
-	/** All groupings or listings in which the commands are classified. */
-	get groups(): string[] {
+	/** All the categories or lists in which the commands are classified. */
+	get categories(): string[] {
 		return [
 			...new Set(
 				this.commands.map(
-					(cmd: CommandContext) => cmd.config.group ? cmd.config.group : 'basic')
+					(cmd: CommandContext) => cmd.config.category ? cmd.config.category : 'basic')
 				)
 			] as string[]
 	}
@@ -189,7 +189,7 @@ class PluginLoader {
 		if (cmd && cmd.config) {
 			if (!cmd.config.desc) cmd.config.desc = ""
 			if (!cmd.config.alias) cmd.config.alias = []
-			if (!cmd.config.group) cmd.config.group = "utils"
+			if (!cmd.config.category) cmd.config.category = "utils"
 			if (!cmd.config.usage) cmd.config.usage = ""
 			if (!cmd.config.ownerOnly) cmd.config.ownerOnly = false
 			if (!cmd.config.guildOnly) cmd.config.guildOnly = false

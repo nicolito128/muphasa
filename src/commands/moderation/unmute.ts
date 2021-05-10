@@ -9,7 +9,7 @@ export = class UnmuteCommand extends CommandContext {
             name: 'unmute',
             desc: 'Si el miembro mencionado se encuentra silenciado devuelvele el permiso de escribir (remueve el rol "Muted").',
             usage: '@mention',
-            group: 'moderation',
+            category: 'moderation',
             guildOnly: true,
             permissions: 'MANAGE_ROLES'
         })

@@ -8,7 +8,7 @@ export = class SayCommand extends CommandContext {
 			name: 'say',
 			desc: 'Obliga al Bot a decir algo.',
 			usage: 'message',
-			group: 'utils'
+			category: 'utils'
 		})
 
 	}

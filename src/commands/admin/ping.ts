@@ -6,7 +6,7 @@ export = class PingCommand extends CommandContext {
 		super({
 			name: 'ping',
 			desc: 'Consulta los tiempos de respuesta del bot.',
-			group: 'admin',
+			category: 'admin',
 		})
 	}
 

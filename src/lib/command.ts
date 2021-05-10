@@ -5,7 +5,7 @@ import { CustomClient } from './../client'
 export interface CommandConfig {
 	name: string;
 	desc?: string;
-	group?: string;
+	category?: string;
 	usage?: string;
 	alias?: string[];
 	ownerOnly?: boolean;

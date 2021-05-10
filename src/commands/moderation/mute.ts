@@ -9,7 +9,7 @@ export = class MuteCommand extends CommandContext {
 			name: 'mute',
 			desc: 'Remueve el permiso de escribir del miembro mencionado (el comando asigna el rol "Muted")',
 			usage: '@mention',
-			group: 'moderation',
+			category: 'moderation',
 			guildOnly: true,
 			permissions: 'MANAGE_ROLES'
 		})

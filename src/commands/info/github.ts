@@ -8,7 +8,7 @@ export = class GithubCommand extends CommandContext {
 		super({
 			name: 'github',
 			desc: 'Muestra el enlace al código fuente del Bot.',
-			group: 'info'
+			category: 'info'
 		})
 
 		this.url = 'https://github.com/nicolito128/muphasa'

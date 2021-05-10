@@ -9,32 +9,33 @@ export = class GroupCommand extends CommandContext {
 	constructor(){
 		super({
 			name: 'group',
-            alias: ['groups']
+            alias: ['groups'],
+            category: 'info'
 		})
 	}
 
 	run({message, user, targets, guild}: Arguments) {
-        const groupList = Plugins.groups
+        const categories = Plugins.categories
         const embedInvalid = Embed.notify({
             title: 'Categorías de comandos',
-            desc: `Consulta las lista de comandos usando **${prefix} group** *group name*\n\n \`${groupList.join(' - ')}\``
+            desc: `Consulta las lista de comandos usando **${prefix} group** *group name*\n\n \`${categories.join(' - ')}\``
         })
-        const group = targets.join()
+        const category = targets.join()
 
-        if (!group) {
+        if (!category) {
             message.channel.send(embedInvalid)
             return;
         }
 
-        if (!groupList.includes(group)) {
+        if (!categories.includes(category)) {
             message.channel.send('El grupo de comandos que intentas consultar no existe.')
             return;
         }
 
-        const groupCommands: string[] = [...new Set<string>(Plugins.commands.map(cmd => cmd.config.group === group ? cmd.config.name : " "))]
+        const groupCommands: string[] = [...new Set<string>(Plugins.commands.map(cmd => cmd.config.category === category ? cmd.config.name : " "))]
         message.channel.send(
             Embed.notify({
-                title: `Group: ${group}`,
+                title: `Categoría: ${category}`,
                 desc: [
                     `Consulta más información sobre un comando usando **${prefix} help** *command*`,
                     `\n ${groupCommands.join(' - ')}`

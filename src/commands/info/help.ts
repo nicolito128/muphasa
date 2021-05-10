@@ -11,7 +11,7 @@ export = class HelpCommand extends CommandContext {
 		super({
 			name: 'help',
 			desc: 'Propicia información adicional sobre los comandos.',
-			group: 'info'
+			category: 'info'
 		})
 	}
 
@@ -33,7 +33,7 @@ export = class HelpCommand extends CommandContext {
         if (guild) id = guild.id;
 
         const description = [
-            `**Grupo**: ${help.group}`,
+            `**Grupo**: ${help.category}`,
             `**Uso**: \`${Config.prefix} ${help.name}${(help.usage) ? ' < ' + help.usage + ' > ' : ''}\``,
         ];
 

@@ -5,7 +5,7 @@ export = class EvalCommand extends CommandContext {
 		super({
 			name: 'eval',
 			desc: 'Evalua código JavaScript y luego muestra el resultado.',
-			group: 'admin',
+			category: 'admin',
 			usage: 'code',
 			alias: [],
 			ownerOnly: true

@@ -14,7 +14,7 @@ export = class DogCommand extends CommandContext {
 		super({
 			name: 'dog',
 			desc: '¡Devuelve perritos!',
-			group: 'fun',
+			category: 'fun',
             alias: ['goodboy'],
             cooldown: 10
 		})

@@ -14,7 +14,7 @@ export = class HexCommand extends CommandContext {
 			desc: 'Muestra una imagen completamente del color hex/rgb ingresado. También puedes consulta una lista de colores por defecto ingresando como parametro la palabra "colors".',
 			usage: 'hex | colors | red blue green',
 			alias: ['rgb'],
-			group: 'utils'
+			category: 'utils'
 		})
 
 		this.colorAlias = {

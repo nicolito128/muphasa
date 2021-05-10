@@ -12,7 +12,7 @@ export = class HugCommand extends CommandContext {
 			name: 'hug',
 			desc: 'Abraza a un usuario mencionado.',
 			usage: '@mention',
-			group: 'actions',
+			category: 'actions',
 			cooldown: 10
 		})
 

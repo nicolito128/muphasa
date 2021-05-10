@@ -9,7 +9,7 @@ export = class InviteCommand extends CommandContext {
 		super({
 			name: 'invite',
 			desc: 'Proporciona enlaces útiles para invitarme a tu servidor.',
-			group: 'info'
+			category: 'info'
 		})
 
         this.inviteURL = 'https://discord.com/oauth2/authorize?client_id=551826544453222418&scope=bot&permissions=1543896183'

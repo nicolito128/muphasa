@@ -9,7 +9,7 @@ export = class ServerCommand extends CommandContext {
 		super({
 			name: 'server',
 			desc: 'Muestra información general sobre el servidor.',
-			group: 'info',
+			category: 'info',
 			alias: ['serverinfo'],
 			guildOnly: true
 		})

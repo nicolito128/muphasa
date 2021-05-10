@@ -9,7 +9,7 @@ export = class AvatarCommand extends CommandContext {
 			desc: 'Muestra tu avatar o el de otro usuario.',
 			usage: '@mention (optional)',
 			alias: ['avy', 'viewavatar'],
-			group: 'utils'
+			category: 'utils'
 		})
 
 	}
