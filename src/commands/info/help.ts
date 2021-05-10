@@ -1,6 +1,5 @@
 import { CommandContext, Arguments } from './../../lib/command'
 import { Embed } from './../../lib/embed'
-import { Plugins } from './../../plugins'
 import Config from './../../Config'
 
 import Text from './../../lib/text'
@@ -15,14 +14,14 @@ export = class HelpCommand extends CommandContext {
 		})
 	}
 
-	run({message, user, targets, guild}: Arguments) {
+	run({message, targets, guild, client}: Arguments) {
 		if (!targets[0]) {
 			message.channel.send('Ingresa un comando del cual quieras obtener información, u revisa la lista de comandos disponibles utilizando `' + Config.prefix +' groups`')
 			return;
 		}
 
         const target: string = toId(targets.join());
-        const help = Plugins.commands.find(cmd => cmd.config.name == target)?.config;
+        const help = client.plugins.commands.find(cmd => cmd.config.name == target)?.config;
         let id: string = "";
 
         if (!help) {
