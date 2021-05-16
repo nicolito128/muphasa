@@ -1,6 +1,6 @@
 import { Message, Guild, User } from 'discord.js'
 import { Arguments } from './lib/command'
-import { PluginSystem } from './plugins'
+import { Plugins, PluginSystem } from './plugins'
 import { App } from './client'
 import Config from './Config'
 
@@ -13,7 +13,7 @@ export class MessageEvents {
     private settedPlugins: boolean;
 
     constructor() {
-        this._plugins = Object.create(null);
+        this._plugins = Plugins;
         this.settedPlugins = false;
     }
 

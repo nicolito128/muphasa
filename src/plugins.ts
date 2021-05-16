@@ -16,7 +16,6 @@ export class PluginSystem {
 
 	constructor() {
 		this.loader = new PluginLoader();
-		this.loader.loadCommands();
 	}
 
 	get commands(): Collection<string, CommandContext> {
