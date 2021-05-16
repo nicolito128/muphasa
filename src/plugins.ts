@@ -162,7 +162,7 @@ class PluginLoader {
 		this.cooldowns = new Collection<string, Map<string, number>>()
 	}
 
-	loadCommands() {
+	loadCommands(): void {
 		fs.readdirSync('src/commands')
 		.map(folder => {
 			fs.readdirSync(`src/commands/${folder}`)
@@ -178,7 +178,7 @@ class PluginLoader {
 		})
 	}
 
-	loadCommand<Cmd extends CommandContext>(cmd: Cmd) {
+	loadCommand<Cmd extends CommandContext>(cmd: Cmd): void {
 		if (!cmd || !cmd.config && !cmd.run) return;
 
 		this.commands.set(cmd.config.name, cmd)
@@ -213,41 +213,4 @@ class PluginLoader {
 	}
 }
 
-/**
-	* MessageHandler:
-	* 	Eval messages and provide responses.
-*/
-class MessageHandler {
-	private plugins: PluginSystem;
-
-	constructor(plugins: PluginSystem) {
-		this.plugins = plugins
-	}
-
-	eval(message: Message) {
-		if (message.author.bot) return;
-
-		if (
-			message.content
-			.toLowerCase()
-			.trim()
-			.substring(0, Config.prefix.length) === Config.prefix
-		) {
-			const params = this.getRunArguments(message)
-			this.plugins.emitCommand(params)
-		}
-	}
-
-	private getRunArguments(message: Message): Arguments {
-		const user: User = message.author;
-        const guild: Guild | null = (message.guild) ? message.guild : null;
-        const targets: string[] = message.content.slice(Config.prefix.length).trim().split(' ');
-        const cmd: string = targets?.shift()?.toLowerCase() || "";
-        const client = App;
-
-        return {message, client, user, guild, targets, cmd}
-	}
-}
-
-export const Plugins = new PluginSystem()
-export const MessageManager = new MessageHandler(Plugins)
+export const Plugins = new PluginSystem();
