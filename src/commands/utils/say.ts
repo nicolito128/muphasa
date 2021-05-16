@@ -13,12 +13,10 @@ export = class SayCommand extends CommandContext {
 	}
 
 	run({message, targets}: Arguments) {
-		if (message.mentions.roles.size > 0) {
-			const existEveryoneMention: boolean = message.mentions.roles.some(role => role.name === 'here' || role.name === 'everyone');
-			if (existEveryoneMention) {
-				message.channel.send('No está permitido mencionar los roles de `here` o `everyone` con este comando.')
-				return;
-			}
+		const existEveryoneMention: boolean = message.mentions.everyone;
+		if (existEveryoneMention) {
+			message.channel.send('No está permitido mencionar los roles de `here` o `everyone` con este comando.')
+			return;
 		}
 
 		const msg: string = targets.join(' ').trim()
