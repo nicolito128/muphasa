@@ -1,5 +1,5 @@
 {
-    "name": "muphasa-typescript",
+    "name": "muphasa-discord",
     "version": "1.0.0",
     "main": "node build",
     "scripts": {
