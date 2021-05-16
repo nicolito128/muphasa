@@ -1,5 +1,4 @@
 import { CommandContext, Arguments } from './../../lib/command'
-import { Embed } from './../../lib/embed'
 
 export = class SayCommand extends CommandContext {
 
@@ -14,6 +13,14 @@ export = class SayCommand extends CommandContext {
 	}
 
 	run({message, targets}: Arguments) {
+		if (message.mentions.roles.size > 0) {
+			const existEveryoneMention: boolean = message.mentions.roles.some(role => role.name === 'here' || role.name === 'everyone');
+			if (existEveryoneMention) {
+				message.channel.send('No está permitido mencionar los roles de `here` o `everyone` con este comando.')
+				return;
+			}
+		}
+
 		const msg: string = targets.join(' ').trim()
         if (!msg) {
         	message.channel.send('Debes ingresar un texto para que repita.')
