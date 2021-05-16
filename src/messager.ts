@@ -17,9 +17,13 @@ export class MessageEvents {
         this.settedPlugins = false;
     }
 
-    setPlugins(system: PluginSystem): void {
+    set plugins(system: PluginSystem) {
         this._plugins = system;
         this.settedPlugins = true;
+    }
+
+    get plugins(): PluginSystem {
+        return this._plugins;
     }
 
 	eval(message: Message): void {
@@ -35,19 +39,19 @@ export class MessageEvents {
 			.trim()
 			.substring(0, Config.prefix.length) === Config.prefix
 		) {
-			const params = this.getRunArguments(message)
-			this._plugins.emitCommand(params)
+			const params = this.getRunArguments(message);
+			this._plugins.emitCommand(params);
 		}
 	}
 
-	private getRunArguments(message: Message): Arguments {
+	getRunArguments(message: Message): Arguments {
 		const user: User = message.author;
         const guild: Guild | null = (message.guild) ? message.guild : null;
         const targets: string[] = message.content.slice(Config.prefix.length).trim().split(' ');
         const cmd: string = targets?.shift()?.toLowerCase() || "";
         const client = App;
 
-        return {message, client, user, guild, targets, cmd}
+        return {message, client, user, guild, targets, cmd};
 	}
 }
 

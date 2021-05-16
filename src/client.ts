@@ -7,18 +7,22 @@ export class CustomClient extends Client {
     readonly user: ClientUser | null;
     readonly startedAt: Date;
 
-    messager: MessageEvents;
     plugins: PluginSystem;
+    messager: MessageEvents;
 
-    constructor(options: ClientOptions) {
+    constructor(
+        plugins: PluginSystem,
+        messager: MessageEvents,
+        options: ClientOptions
+    ) {
         super(options)
         this.user = super.user;
         this.startedAt = new Date();
-        this.plugins = Plugins;
-        this.messager = Messager;
+        this.plugins = plugins;
+        this.messager = messager;
 
         this.once("ready", () => {
-            void (this.user as ClientUser).setActivity(`Prefix: ${Config.prefix}`)
+            (this.user as ClientUser).setActivity(`Prefix: ${Config.prefix}`)
             this.on("disconnect", () => console.log(`The bot has been disconnected.`))
         })
 
@@ -28,13 +32,13 @@ export class CustomClient extends Client {
         })
 
         this.on('message', async (msg) => {
-            this.messager.eval(msg)
+            await this.messager.eval(msg)
         })
     }
 
     setPlugins(system: PluginSystem): void {
         this.plugins = system;
-        this.messager.setPlugins(system);
+        this.messager.plugins = system;
     }
 
     connect(): void {
@@ -47,4 +51,4 @@ export class CustomClient extends Client {
     }
 }
 
-export const App = new CustomClient({ restTimeOffset: 1000 })
+export const App = new CustomClient(Plugins, Messager, { restTimeOffset: 1000 })

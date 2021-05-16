@@ -58,7 +58,7 @@ export class PluginSystem {
 		return true;
 	}
 
-	async emitCommand(args: Arguments): Promise<void> {
+	emitCommand(args: Arguments): void {
 		const { message, user } = args;
 
 		if (!this.getCommand(args.cmd)) return;
