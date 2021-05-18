@@ -9,6 +9,9 @@ export = class CategoryCommand extends CommandContext {
 	constructor(){
 		super({
 			name: 'category',
+            desc: 'Permite consultar las listas en las que se agrupan todos los comandos disponibles.',
+            alias: ['categories'],
+            category: 'info'
 		})
 	}
 
@@ -16,7 +19,7 @@ export = class CategoryCommand extends CommandContext {
         const categories = Plugins.categories
         const embedInvalid = Embed.notify({
             title: 'Categorías de comandos',
-            desc: `Consulta las lista de comandos usando **${prefix} category** *category name*\n\n \`${categories.join(' - ')}\``
+            desc: `Consulta las lista de comandos usando **${prefix} category** *name*\n\n \`${categories.join(' - ')}\``
         })
         const category = targets.join()
 
