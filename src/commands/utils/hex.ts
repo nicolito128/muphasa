@@ -73,46 +73,55 @@ export = class HexCommand extends CommandContext {
 
 		// validate RGB
         if ( 
-			targetsParsed.length > 1 &&
-			targetsParsed.length < 3
+			targetsParsed.length >= 3 
 		) {
-            message.channel.send(`Si ingresas un valor RGB debes pasar 3 parametros.`);
-            return;
-        } else if ( targetsParsed.length === 3 ) {
 			// it's necessary to validate that usable values were entered to convert to a color.
             targetsParsed.forEach(target => {
                 if (isNaN(target)) {
                     message.channel.send('Si ingresas valores RGB todos los parametros deben ser números.');
                     return;
                 }
+
+				if (target > 255) {
+					message.channel.send('Si ingresas valores RGB estos no pueden ser superiores a 255.')
+					return;
+				}
             })
 
             hex = this.rgbToHex(targetsParsed[0], targetsParsed[1], targetsParsed[2]);
             rgbInEmbed = `${targetsParsed[0]} ${targetsParsed[1]} ${targetsParsed[2]}`;
+
+        } else {
+			message.channel.send(`Si ingresas un valor RGB debes pasar 3 parametros.`);
+            return;
         }
 		
 		// validate color alias
 		if ( this.colorAlias.hasOwnProperty( toId(targets[0]) ) ) hex = this.colorAlias[targets[0]];
 
-		// validate hex
-		if (targets[0].startsWith('#')) {
-			if (targets[0].length === 4) {
-				// remove the "#" and repeat values to form a valid string
-				hex = targets[0].substring(1) + targets[0].substring(1);
-			}
-
-			hex = targets[0].substring(1)
-		} else {
-			// Does not include '#', so repeat values to form a valid string
-			if (targets[0].length === 3) {
+		if (targets.length === 1) {
+			if (targets[0].startsWith('#')) {
+				if (targets[0].length === 4) {
+					// remove the "#" and repeat values to form a valid string
+					hex = targets[0].substring(1) + targets[0].substring(1);
+				} else {
+					hex = targets[0].substring(1)
+				}
+			} else if (targets[0].length === 3) {
+				// Does not include '#', so repeat values to form a valid string
 				hex = targets[0] + targets[0]
+			} else if (targets[0].length > 6) {
+				hex = targets[0].substring(0, 7)
+			} else {
+				hex = targets[0]
 			}
-
-			hex = targets[0]
+		} else {
+			message.channel.send('Prueba ingresando un valor Hexadecimal válido.')
+			return;
 		}
 
         image += `${hex}/${hex}`;
-        rgb = this.hexToRgb(hex.toString());
+        rgb = this.hexToRgb(hex);
         if (!rgbInEmbed) rgbInEmbed = rgb ? rgb.r.toString() + ' ' + rgb.g.toString() + ' ' + rgb.b.toString() : 'NaN'
 
         const embed = Embed.notify({
@@ -128,20 +137,17 @@ export = class HexCommand extends CommandContext {
         message.channel.send(embed);
 	}
 
-	private getHexValue(n: number): string {
+	getHexValue(n: number): string {
 		const hexValue: string = Number(n).toString(16)
 		return hexValue;
 	}
 
-	private rgbToHex(r: number, g: number, b: number): string {
+	rgbToHex(r: number, g: number, b: number): string {
 		return this.getHexValue(r) + this.getHexValue(g) + this.getHexValue(b);
 	}
 
- 	private hexToRgb(hex: string): RGB {
-		let str = hex;
-		if (hex.length > 6) str = hex.substring(0, 7);
-
-    	const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(str) || ['0', '0', '0'];
+ 	hexToRgb(hex: string): RGB {
+    	const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex) || ['0', '0', '0'];
     	return {
       		r: parseInt(result[1], 16),
       		g: parseInt(result[2], 16),
