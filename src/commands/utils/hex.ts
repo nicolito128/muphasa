@@ -45,11 +45,6 @@ export = class HexCommand extends CommandContext {
 	}
 
 	run({message, targets, guild}: Arguments) {
-        let hex: string = '';
-        let rgb: RGB | null = null;
-        let rgbInEmbed: string = '';
-        let image: string = 'https://dummyimage.com/1000x1000/';
-
         if (!targets.length || !targets[0]) {
             message.channel.send(`No ingresaste ningún color para mostrar.`);
             return;
@@ -69,55 +64,69 @@ export = class HexCommand extends CommandContext {
             return;
         }
 
+		let hex: string = '';
+        let rgb: RGB | null = null;
+        let rgbInEmbed: string = '';
+        let image: string = 'https://dummyimage.com/1000x1000/';
 
-		// validate RGB
-        if ( 
-			targets.length === 3 
-		) {
-			// it's necessary to validate that usable values were entered to convert to a color.
-			const targetNumbers: number[] = targets.map(target => parseInt(target))
-			if (targetNumbers.some(color => isNaN(color))) {
-				message.channel.send('Si ingresas un código de colores RGB todos los parametros deben ser números.');
-				return;
-			}
-
-			if (targetNumbers.some(color => color > 255)) {
-				message.channel.send('Los valores RGB no pueden ser superiores a 255.');
-				return;
-			}
-
-			const red = targetNumbers[0];
-			const green = targetNumbers[1];
-			const blue = targetNumbers[2];
-            hex = this.rgbToHex(red, green, blue);
-			rgb = {
-				r: red,
-				g:  green,
-				b:  blue
-			};
-            rgbInEmbed = `${red} ${green} ${blue}`;
-        }
-		
-		// validate color alias
-		const targetIsAColorAlias: boolean = this.colorAlias.hasOwnProperty( toId(targets[0]) );
-		if (targetIsAColorAlias) hex = this.colorAlias[targets[0]];
-
-		if (targets.length === 1 && !targetIsAColorAlias ) {
-			if (targets[0].startsWith('#')) {
-				if (targets[0].length === 4) {
-					// remove the "#" and repeat values to form a valid string
-					hex = targets[0].substring(1) + targets[0].substring(1);
-				} else {
-					hex = targets[0].substring(1)
+		const isHexOrRGB: number = targets.length;
+		switch (isHexOrRGB) {
+			// hexadecimal
+			case 1:
+				// validate color alias
+				const targetIsAColorAlias: boolean = this.colorAlias.hasOwnProperty( toId(targets[0]) );
+				if (targetIsAColorAlias) {
+					hex = this.colorAlias[targets[0]]
+					return;
 				}
-			} else if (targets[0].length === 3) {
-				// Does not include '#', so repeat values to form a valid string
-				hex = targets[0] + targets[0]
-			} else if (targets[0].length > 6) {
-				hex = targets[0].substring(0, 7)
-			} else {
-				hex = targets[0]
-			}
+
+				const hexLength: number = targets[0].length;
+				if (targets[0].startsWith('#')) {
+					if (hexLength === 4) {
+						const subpart: string = targets[0].substring(1);
+						hex = subpart + subpart;
+					} else {
+						hex = targets[0].substring(1);
+					}
+				} else {
+					if (hexLength === 3) {
+						hex = targets[0] + targets[0];
+					} else {
+						hex = targets[0];
+					}
+				}
+
+				break;
+
+			// rgb
+			case 3:
+				// it's necessary to validate that usable values were entered to convert to a color.
+				const targetNumbers: number[] = targets.map(target => parseInt(target))
+				if (targetNumbers.some(color => isNaN(color))) {
+					message.channel.send('Si ingresas un código de colores RGB todos los parámetros deben ser números.');
+					return;
+				}
+
+				if (targetNumbers.some(color => color > 255)) {
+					message.channel.send('Los valores RGB no pueden ser superiores a 255.');
+					return;
+				}
+
+				const red = targetNumbers[0];
+				const green = targetNumbers[1];
+				const blue = targetNumbers[2];
+
+            	hex = this.rgbToHex(red, green, blue);
+				rgb = {
+					r: red,
+					g:  green,
+					b:  blue
+				};
+            	rgbInEmbed = `${red} ${green} ${blue}`;
+				break;
+			default:
+				message.channel.send('No ingresaste ninguna forma de parámetro válido.\nHex: `#RRGGBB`\nRGB: `0 0 0`');
+				return;
 		}
 
         image += `${hex}/${hex}`;
