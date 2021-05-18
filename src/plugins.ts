@@ -47,7 +47,11 @@ export class PluginSystem {
 	}
 
 	hasCommand(name: string): boolean {
-		if (this.commands.has(name)) return true;
+		const existAnAlias: boolean = this.commands.some(cmd => (cmd.config.alias  as string[]).includes(name));
+		if (
+			this.commands.has(name) ||
+			existAnAlias
+		) return true;
 		return false
 	}
 
