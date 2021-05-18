@@ -69,32 +69,33 @@ export = class HexCommand extends CommandContext {
             return;
         }
 
-        const targetsParsed: number[] = targets.map(target => parseInt(target))
 
 		// validate RGB
         if ( 
-			targetsParsed.length === 3 
+			targets.length === 3 
 		) {
 			// it's necessary to validate that usable values were entered to convert to a color.
-            targetsParsed.forEach(target => {
-                if (isNaN(target)) {
-                    message.channel.send('Si ingresas valores RGB todos los parametros deben ser números.');
-                    return;
-                }
+			const targetNumbers: number[] = targets.map(target => parseInt(target))
+			if (targetNumbers.some(color => isNaN(color))) {
+				message.channel.send('Si ingresas un código de colores RGB todos los parametros deben ser números.');
+				return;
+			}
 
-				if (target > 255) {
-					message.channel.send('Los valores RGB no pueden ser superiores a 255.')
-					return;
-				}
-            })
+			if (targetNumbers.some(color => color > 255)) {
+				message.channel.send('Los valores RGB no pueden ser superiores a 255.');
+				return;
+			}
 
-            hex = this.rgbToHex(targetsParsed[0], targetsParsed[1], targetsParsed[2]);
+			const red = targetNumbers[0];
+			const green = targetNumbers[1];
+			const blue = targetNumbers[2];
+            hex = this.rgbToHex(red, green, blue);
 			rgb = {
-				r: targetsParsed[0],
-				g:  targetsParsed[0],
-				b:  targetsParsed[0]
+				r: red,
+				g:  green,
+				b:  blue
 			};
-            rgbInEmbed = `${targetsParsed[0]} ${targetsParsed[1]} ${targetsParsed[2]}`;
+            rgbInEmbed = `${red} ${green} ${blue}`;
         }
 		
 		// validate color alias
@@ -141,8 +142,8 @@ export = class HexCommand extends CommandContext {
 		return hexValue;
 	}
 
-	rgbToHex(r: number, g: number, b: number): string {
-		return this.getHexValue(r) + this.getHexValue(g) + this.getHexValue(b);
+	rgbToHex(red: number, green: number, blue: number): string {
+		return this.getHexValue(red) + this.getHexValue(green) + this.getHexValue(blue);
 	}
 
  	hexToRgb(hex: string): RGB {
