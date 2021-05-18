@@ -46,7 +46,7 @@ export = class HexCommand extends CommandContext {
 
 	run({message, targets, guild}: Arguments) {
         let hex: string = '';
-        let rgb: RGB = Object.create(null);
+        let rgb: RGB | null = null;
         let rgbInEmbed: string = '';
         let image: string = 'https://dummyimage.com/1000x1000/';
 
@@ -73,7 +73,7 @@ export = class HexCommand extends CommandContext {
 
 		// validate RGB
         if ( 
-			targetsParsed.length >= 3 
+			targetsParsed.length === 3 
 		) {
 			// it's necessary to validate that usable values were entered to convert to a color.
             targetsParsed.forEach(target => {
@@ -83,23 +83,25 @@ export = class HexCommand extends CommandContext {
                 }
 
 				if (target > 255) {
-					message.channel.send('Si ingresas valores RGB estos no pueden ser superiores a 255.')
+					message.channel.send('Los valores RGB no pueden ser superiores a 255.')
 					return;
 				}
             })
 
             hex = this.rgbToHex(targetsParsed[0], targetsParsed[1], targetsParsed[2]);
+			rgb = {
+				r: targetsParsed[0],
+				g:  targetsParsed[0],
+				b:  targetsParsed[0]
+			};
             rgbInEmbed = `${targetsParsed[0]} ${targetsParsed[1]} ${targetsParsed[2]}`;
-
-        } else {
-			message.channel.send(`Si ingresas un valor RGB debes pasar 3 parametros.`);
-            return;
         }
 		
 		// validate color alias
-		if ( this.colorAlias.hasOwnProperty( toId(targets[0]) ) ) hex = this.colorAlias[targets[0]];
+		const targetIsAColorAlias: boolean = this.colorAlias.hasOwnProperty( toId(targets[0]) );
+		if (targetIsAColorAlias) hex = this.colorAlias[targets[0]];
 
-		if (targets.length === 1) {
+		if (targets.length === 1 && !targetIsAColorAlias ) {
 			if (targets[0].startsWith('#')) {
 				if (targets[0].length === 4) {
 					// remove the "#" and repeat values to form a valid string
@@ -115,13 +117,10 @@ export = class HexCommand extends CommandContext {
 			} else {
 				hex = targets[0]
 			}
-		} else {
-			message.channel.send('Prueba ingresando un valor Hexadecimal válido.')
-			return;
 		}
 
         image += `${hex}/${hex}`;
-        rgb = this.hexToRgb(hex);
+        if (!rgb) rgb = this.hexToRgb(hex);
         if (!rgbInEmbed) rgbInEmbed = rgb ? rgb.r.toString() + ' ' + rgb.g.toString() + ' ' + rgb.b.toString() : 'NaN'
 
         const embed = Embed.notify({
