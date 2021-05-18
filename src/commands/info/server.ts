@@ -1,5 +1,4 @@
 import { CommandContext, Arguments } from './../../lib/command'
-import { Guild } from 'discord.js'
 import { Embed } from './../../lib/embed'
 
 export = class ServerCommand extends CommandContext {
@@ -33,37 +32,35 @@ export = class ServerCommand extends CommandContext {
 		};
 	}
 
-	run({message}: Arguments) {
-		const guild = message.guild as Guild;
-
+	run({message, guild}: Arguments) {
 		const status = {
-            online: guild.presences.cache.filter(presence => presence.status === "online").size,
-            idle: guild.presences.cache.filter(presence => presence.status === "idle").size,
-            dnd: guild.presences.cache.filter(presence => presence.status === "dnd").size
+            online: guild!.presences.cache.filter(presence => presence.status === "online").size,
+            idle: guild!.presences.cache.filter(presence => presence.status === "idle").size,
+            dnd: guild!.presences.cache.filter(presence => presence.status === "dnd").size
         };
 
         const channels = {
-            text: guild.channels.cache.filter(channel => channel.type === "text").size,
-            voice: guild.channels.cache.filter(channel => channel.type === "voice").size
+            text: guild!.channels.cache.filter(channel => channel.type === "text").size,
+            voice: guild!.channels.cache.filter(channel => channel.type === "voice").size
         };
 
-        const bots = guild.members.cache.filter(member => member.user.bot).size
-        const roles = guild.roles.cache.size
-        const members = guild.memberCount
-        const region = guild.region
-        const verificationLevel = guild.verificationLevel
+        const bots: number = guild!.members.cache.filter(member => member.user.bot).size
+        const roles: number = guild!.roles.cache.size
+        const members: number = guild!.memberCount
+        const region: string = this.regions[guild!.region]
+        const verificationLevel = guild!.verificationLevel
 
         const embedInfo = Embed.notify({title: '', desc: ''})
-            .setAuthor(guild.name, guild.iconURL() || "")
-            .setThumbnail(guild.iconURL() || "")
+            .setAuthor(guild!.name, guild!.iconURL() || "")
+            .setThumbnail(guild!.iconURL() || "")
             .addField('Presences', `:green_circle: ${status.online} ㅤ:yellow_circle: ${status.idle} ㅤ:red_circle: ${status.dnd}`)
             .addField('Members', members, true)
             .addField('Bots', bots, true)
             .addField('Roles', roles, true)
+			.addField('Region', region)
             .addField('Channels', [`**Text**: ${channels.text}`, `**Voice**: ${channels.voice}`])
             .addField('Verification Level', verificationLevel.toUpperCase())
-            .addField('Region', this.regions[region])
-            .setFooter(`ID: ${guild.id} | Created: ${guild.createdAt.toUTCString()}`)
+            .setFooter(`ID: ${guild!.id} | Created: ${guild!.createdAt.toUTCString()}`)
 
         message.channel.send(embedInfo)
 	}
