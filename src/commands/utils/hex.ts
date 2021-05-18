@@ -138,7 +138,8 @@ export = class HexCommand extends CommandContext {
 	}
 
 	getHexValue(n: number): string {
-		const hexValue: string = Number(n).toString(16)
+		const value = Number(n).toString(16);
+		const hexValue: string = value.length == 1 ? value + value : value;
 		return hexValue;
 	}
 
